@@ -4,16 +4,36 @@ using UnityEngine;
 
 public class Hero : Character {
 
-	// Use this for initialization
-	void Start () {
-		
+    protected bool isSelected;
+
+    // Use this for initialization
+    protected override void Start () {
+        isSelected = false;
+        base.Start();
 	}
 	
 	// Update is called once per frame
 	protected override void Update () {
 
-
-        base.Update();
+        if(gameObject.GetComponent<ClickOn>().currentlySelected == true)
+        {
+            GetDirection();
+            base.Update();
+        }
+        
 
 	}
+
+    protected void GetDirection()
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            RaycastHit rayHit;
+
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out rayHit, Mathf.Infinity))
+            {
+                target = rayHit.point;
+            }
+        }
+    }
 }

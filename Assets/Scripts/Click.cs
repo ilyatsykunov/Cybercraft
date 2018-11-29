@@ -79,7 +79,7 @@ public class Click : MonoBehaviour {
             }
         }
 
-        if (Input.GetMouseButton(1))
+        if (Input.GetMouseButton(2))
         {
             ClearSelection();
         }

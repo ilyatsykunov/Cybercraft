@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public abstract class Character : MonoBehaviour
 {
@@ -9,32 +10,30 @@ public abstract class Character : MonoBehaviour
     protected float speed;
 
     protected Vector2 direction;
-    protected Rigidbody RB;
+    protected NavMeshAgent agent;
 
     [SerializeField]
     protected Vector3 target;
 
+    protected virtual void Start()
+    {
+        target = transform.position;
+        agent = gameObject.GetComponent<NavMeshAgent>();
+    }
+
     protected virtual void Update()
     {
-        GetDirection();
-        Move();
+        
+        if (target != transform.position)
+        {
+            Move();
+        }
     }
 
     protected void Move()
     {
-        transform.Translate(target * speed * Time.deltaTime);
+        agent.SetDestination(target);
     }
 
-    protected void GetDirection()
-    {
-        if (Input.GetMouseButtonDown(1))
-        {
-            RaycastHit rayHit;
-
-            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out rayHit, Mathf.Infinity))
-            {
-                target = rayHit.point;
-            }
-        }
-    }
+    
 }
