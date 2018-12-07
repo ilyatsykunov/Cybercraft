@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class ChoseLocation : MonoBehaviour {
 
@@ -8,7 +9,6 @@ public class ChoseLocation : MonoBehaviour {
     protected bool isBeingMoved;
     [SerializeField]
     protected bool canBePlaced;
-
     [SerializeField]
     private Vector3 mousePosition;
     [SerializeField]
@@ -38,6 +38,10 @@ public class ChoseLocation : MonoBehaviour {
         {
             gameObject.transform.position = new Vector3(mousePosition.x, 1f, mousePosition.z);
             isBeingMoved = false;
+            GameObject world = GameObject.Find("World");
+            //REBAKE MAP
+            world.GetComponent<NavMeshSurface>().BuildNavMesh();
+            //REBAKE MAP
         }
     }
 
@@ -49,6 +53,7 @@ public class ChoseLocation : MonoBehaviour {
         {
             mousePosition = rayHit.point;
         }
+        //Make it float above the ground depending on surface height
         GetDistanceToGround();
         /*if (distanceToGround > 2f)
         {

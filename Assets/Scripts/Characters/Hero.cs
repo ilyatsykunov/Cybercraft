@@ -19,9 +19,7 @@ public class Hero : Character {
         {
             GetDirection();
             base.Update();
-        }
-        
-
+        }   
 	}
 
     protected void GetDirection()
@@ -33,7 +31,16 @@ public class Hero : Character {
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out rayHit, Mathf.Infinity))
             {
                 target = rayHit.point;
+                if(rayHit.collider.gameObject.tag == "Enemy")
+                {
+                    attackTarget = rayHit.collider.gameObject;
+                }
+                else
+                {
+                    attackTarget = null;
+                }
             }
         }
     }
+
 }
