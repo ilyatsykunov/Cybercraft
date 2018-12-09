@@ -6,6 +6,7 @@ using UnityEngine.AI;
 public abstract class Character : MonoBehaviour
 {
 
+    public string faction;
     [SerializeField]
     protected float speed;
 
@@ -34,6 +35,7 @@ public abstract class Character : MonoBehaviour
 
     protected virtual void Update()
     {
+        LookForBuildings();
         ManageHealth();
         if (target != transform.position)
         {
@@ -86,6 +88,19 @@ public abstract class Character : MonoBehaviour
         else
         {
             target = attackTarget.transform.position;
+        }
+    }
+    protected void LookForBuildings() //Replacement for trigger colliders
+    {
+        GameObject[] buildings = GameObject.FindGameObjectsWithTag("Building");
+        foreach(GameObject building in buildings)
+        {
+            BuildingClass buildingClass = building.GetComponent<BuildingClass>();
+            float distance = Vector3.Distance(gameObject.transform.position, building.transform.position);
+            if (buildingClass.faction != faction && distance < 10f)
+            {
+                buildingClass.StartCoroutine(buildingClass.Capture(faction));
+            }
         }
     }
 
