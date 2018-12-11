@@ -11,6 +11,8 @@ public abstract class Character : MonoBehaviour
     protected float speed;
 
     protected Vector2 direction;
+    [SerializeField]
+    protected bool isMoving;
     protected NavMeshAgent agent;
 
     [SerializeField]
@@ -33,42 +35,49 @@ public abstract class Character : MonoBehaviour
     protected GameObject shootFrom;
     [SerializeField]
     protected GameObject bullet;
+    public LayerMask ignoreMask;
 
-    protected virtual void Start()
+    protected virtual void Awake()
     {
         health = 100;
         target = transform.position;
         agent = gameObject.GetComponent<NavMeshAgent>();
-        ammo = 9;
+        ammo = 100;
+        isMoving = false;
     }
 
     protected virtual void Update()
     {
+        StartCoroutine(GetSpeed());
         CaptureBuilding();
         ManageHealth();
-        if (target != transform.position)
+        if (target != transform.position && isMoving == false)
         {
             Move();
         }
-        if(attackTarget != null)
+        if (attackTarget != null)
         {
-            //Can you melee attack
-            distanceToEnemy = Vector3.Distance(gameObject.transform.position, attackTarget.transform.position);
             Attack();
-
         }
-
-
     }
 
     protected void Move()
     {
+        if (isAttacking == true)
+        {
+            StopCoroutine(Melee());
+            StopCoroutine(Shoot());
+            distanceToEnemy = 0f;
+            enemyInRange = false;
+            isAttacking = false;
+        }
+        Debug.Log("void Move");
         agent.SetDestination(target);
     }
 
     protected void ManageHealth()
     {
-        if(health > 100)
+        if (health > 100)
         {
             health = 100;
         }
@@ -85,12 +94,14 @@ public abstract class Character : MonoBehaviour
     }
     protected void Attack()
     {
-        gameObject.transform.LookAt(attackTarget.transform.position);
-        RaycastHit rayHit;
-        //Linecast returns false all the time
-        if(Physics.Linecast(gameObject.transform.position, attackTarget.transform.position, out rayHit, 0))
+        target = transform.position;
+        distanceToEnemy = Vector3.Distance(gameObject.transform.position, attackTarget.transform.position);
+        Vector3 directionToEnemy = (attackTarget.transform.position - transform.position).normalized;
+        if (isAttacking == false)
         {
-            if(rayHit.collider.gameObject == attackTarget)
+            Debug.Log("LookAt");
+            gameObject.transform.LookAt(attackTarget.transform.position);
+            if (!Physics.Raycast(shootFrom.transform.position, directionToEnemy, distanceToEnemy, ignoreMask))
             {
                 enemyInRange = true;
             }
@@ -99,74 +110,84 @@ public abstract class Character : MonoBehaviour
                 enemyInRange = false;
             }
         }
-
-
-        if(enemyInRange == true)
+        if (enemyInRange == true)
         {
-            target = transform.position;
-            if (distanceToEnemy < 5f && isAttacking == false)
+            if (distanceToEnemy < 3f && isAttacking == false)
             {
                 StartCoroutine(Melee());
             }
-            else if (distanceToEnemy > 5f && isAttacking == false) //Also if total ammo > 0
+            else if (distanceToEnemy > 3f && isAttacking == false) //Also if total ammo > 0
             {
                 StartCoroutine(Shoot());
             }
         }
         else
         {
-            //make a while loop
-            target = attackTarget.transform.position;
-        }
 
+        }
     }
-    protected IEnumerator Melee() //Hit attackTarget
-    {
-        isAttacking = true;
-        yield return new WaitForSeconds(1);
-        attackTarget.GetComponent<Character>().health -= 10;
-        isAttacking = false;
-    }
-    protected IEnumerator Shoot() //Launch a bullet at attackTarget
-    {
-        if(ammo > 0)
+        protected IEnumerator Melee() //Hit attackTarget
         {
+            StopCoroutine(Shoot());
             isAttacking = true;
-            //Launch a bullet
             yield return new WaitForSeconds(1);
-            Vector3 shootTo = new Vector3(Random.Range(attackTarget.transform.position.x - 0.5f, attackTarget.transform.position.x + 0.5f), Random.Range(attackTarget.transform.position.y - 0.5f, attackTarget.transform.position.y + 0.5f), Random.Range(attackTarget.transform.position.z - 0.5f, attackTarget.transform.position.z + 0.5f));
-            GameObject spawnedBullet = Instantiate(bullet, shootFrom.transform.position, shootFrom.transform.rotation);
-            spawnedBullet.GetComponent<Bullet>().ShootTo(shootTo);
-            ammo -= 1;
-            //Rough aiming at the attackTarget
+            attackTarget.GetComponent<Character>().health -= 10;
             isAttacking = false;
+        }
+        protected IEnumerator Shoot() //Launch a bullet at attackTarget
+        {
+            if (ammo > 0)
+            {
+                StopCoroutine(Melee());
+                isAttacking = true;
+                //Launch a bullet
+                yield return new WaitForSeconds(1);
+                Vector3 shootTo = new Vector3(Random.Range(attackTarget.transform.position.x - 0.5f, attackTarget.transform.position.x + 0.5f), Random.Range(attackTarget.transform.position.y - 0.5f, attackTarget.transform.position.y + 0.5f), Random.Range(attackTarget.transform.position.z - 0.5f, attackTarget.transform.position.z + 0.5f));
+                GameObject spawnedBullet = Instantiate(bullet, shootFrom.transform.position, shootFrom.transform.rotation);
+                spawnedBullet.GetComponent<Bullet>().ShootTo(shootTo);
+                ammo -= 1;
+                //Rough aiming at the attackTarget
+                isAttacking = false;
+            }
+            else
+            {
+                //reload
+            }
+        }
+    protected IEnumerator GetSpeed()
+    {
+        Vector3 pos1 = transform.position;
+        yield return new WaitForSeconds(0.1f);
+        Vector3 pos2 = transform.position;
+        if(pos1 != pos2)
+        {
+            isMoving = true;
         }
         else
         {
-            //reload
+            isMoving = false;
         }
-
     }
-    protected void CaptureBuilding() //Replacement for trigger colliders
-    {
-        GameObject[] buildings = GameObject.FindGameObjectsWithTag("Building");
-        foreach(GameObject building in buildings)
+        protected void CaptureBuilding() //Replacement for trigger colliders
         {
-            BuildingClass buildingClass = building.GetComponent<BuildingClass>();
-            float distance = Vector3.Distance(gameObject.transform.position, building.transform.position);
-            if (buildingClass.faction != faction && distance < 10f)
+            GameObject[] buildings = GameObject.FindGameObjectsWithTag("Building");
+            foreach (GameObject building in buildings)
             {
-                buildingClass.StartCoroutine(buildingClass.Capture(faction));
+                BuildingClass buildingClass = building.GetComponent<BuildingClass>();
+                float distance = Vector3.Distance(gameObject.transform.position, building.transform.position);
+                if (buildingClass.faction != faction && distance < 10f)
+                {
+                    buildingClass.StartCoroutine(buildingClass.Capture(faction));
+                }
             }
         }
-    }
-    private void OnCollisionEnter(Collision collision) 
-    {
-        if (collision.gameObject.tag == "Bullet") //Take bullet damage
+        private void OnCollisionEnter(Collision collision)
         {
-            Debug.Log(gameObject.name + " " + health);
-            health -= 10;
+            if (collision.gameObject.tag == "Bullet") //Take bullet damage
+            {
+                Debug.Log(gameObject.name + " " + health);
+                health -= 10;
+            }
         }
-    }
 
-}
+    }

@@ -161,6 +161,9 @@ MonoBehaviour:
   ammo: 0
   shootFrom: {fileID: 0}
   bullet: {fileID: 0}
+  ignoreMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1 &12758312
 GameObject:
   m_ObjectHideFlags: 0
@@ -3929,7 +3932,7 @@ GameObject:
   - component: {fileID: 1599250934}
   - component: {fileID: 1599250937}
   - component: {fileID: 1599250936}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Building
   m_TagString: Building
   m_Icon: {fileID: 0}
@@ -4487,9 +4490,12 @@ MonoBehaviour:
   attackTarget: {fileID: 0}
   enemyInRange: 0
   distanceToEnemy: 0
-  ammo: 9
+  ammo: 100
   shootFrom: {fileID: 1076846332}
   bullet: {fileID: 1609672059975050, guid: b1f749a1a77892d4eb18227da2d42f11, type: 2}
+  ignoreMask:
+    serializedVersion: 2
+    m_Bits: 1024
 --- !u!54 &1763518731
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4855,6 +4861,9 @@ MonoBehaviour:
   ammo: 0
   shootFrom: {fileID: 0}
   bullet: {fileID: 0}
+  ignoreMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!135 &1956834207
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -5111,7 +5120,7 @@ GameObject:
   - component: {fileID: 2023313895}
   - component: {fileID: 2023313898}
   - component: {fileID: 2023313897}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Building1
   m_TagString: Building
   m_Icon: {fileID: 0}

@@ -7,9 +7,9 @@ public class Hero : Character {
     protected bool isSelected;
 
     // Use this for initialization
-    protected override void Start () {
+    protected override void Awake() {
         isSelected = false;
-        base.Start();
+        base.Awake();
 	}
 	
 	// Update is called once per frame
@@ -30,7 +30,6 @@ public class Hero : Character {
 
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out rayHit, Mathf.Infinity))
             {
-                target = rayHit.point;
                 if(rayHit.collider.gameObject.tag == "Enemy")
                 {
                     attackTarget = rayHit.collider.gameObject;
@@ -38,6 +37,7 @@ public class Hero : Character {
                 else
                 {
                     attackTarget = null;
+                    target = new Vector3(rayHit.point.x, transform.position.y, rayHit.point.z);
                 }
             }
         }
