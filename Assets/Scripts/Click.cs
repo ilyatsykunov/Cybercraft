@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Click : MonoBehaviour {
+public class Click : MonoBehaviour
+{
 
     [SerializeField]
     private LayerMask clickablesLayer;
@@ -22,12 +23,14 @@ public class Click : MonoBehaviour {
         selectedObjects = new List<GameObject>();
     }
 
-    void Start () {
+    void Start()
+    {
 
-	}
+    }
 
 
-    void Update() {
+    void Update()
+    {
 
         if (Input.GetMouseButtonDown(0))
         {
@@ -72,8 +75,8 @@ public class Click : MonoBehaviour {
         if (Input.GetMouseButtonUp(0))
         {
             mousePos2 = Camera.main.ScreenToViewportPoint(Input.mousePosition);
-            
-            if(mousePos1 != mousePos2)
+
+            if (mousePos1 != mousePos2)
             {
                 SelectObjects();
             }
@@ -96,11 +99,11 @@ public class Click : MonoBehaviour {
 
         Rect selectRect = new Rect(mousePos1.x, mousePos1.y, mousePos2.x - mousePos1.x, mousePos2.y - mousePos1.y);
 
-        foreach(GameObject selectObject in selectableObjects)
+        foreach (GameObject selectObject in selectableObjects)
         {
-            if(selectObject != null)
+            if (selectObject != null)
             {
-                if(selectRect.Contains(Camera.main.WorldToViewportPoint(selectObject.transform.position), true))
+                if (selectRect.Contains(Camera.main.WorldToViewportPoint(selectObject.transform.position), true))
                 {
                     selectedObjects.Add(selectObject);
                     selectObject.GetComponent<ClickOn>().currentlySelected = true;
@@ -113,9 +116,9 @@ public class Click : MonoBehaviour {
             }
         }
 
-        if(remObjects.Count > 0)
+        if (remObjects.Count > 0)
         {
-            foreach(GameObject rem in remObjects)
+            foreach (GameObject rem in remObjects)
             {
                 selectableObjects.Remove(rem);
             }

@@ -16,35 +16,37 @@ public abstract class Character : MonoBehaviour
     protected NavMeshAgent agent;
 
     [SerializeField]
-    protected Vector3 target;
-    protected Vector3 oldTarget;
+    public Vector3 target;
+    public Vector3 oldTarget;
 
     //Figthing
     public int health;
-    [SerializeField]
-    protected bool isAttacking;
-    [SerializeField]
-    protected GameObject attackTarget;
+    public GameObject weapon;
+    public bool isAttacking;
+    public bool isReloading;
+    public GameObject attackTarget;
+    public GameObject oldAttackTarget;
     [SerializeField]
     protected bool enemyInRange;
     [SerializeField]
     protected float distanceToEnemy;
-    [SerializeField]
-    protected int ammo;
     [SerializeField]
     protected GameObject shootFrom;
     [SerializeField]
     protected GameObject bullet;
     public LayerMask ignoreMask;
 
+    //Animation
+    protected Animator charAnimator;
+
     protected virtual void Awake()
     {
         health = 100;
         target = transform.position;
         agent = gameObject.GetComponent<NavMeshAgent>();
-        ammo = 100;
         isMoving = false;
         oldTarget = target;
+        charAnimator = gameObject.GetComponent<Animator>();
     }
 
     protected virtual void Update()
@@ -52,6 +54,7 @@ public abstract class Character : MonoBehaviour
         StartCoroutine(GetSpeed());
         CaptureBuilding();
         ManageHealth();
+        ChangeAnimation();
         if ((target != transform.position && isMoving == false) || oldTarget != target)
         {
             oldTarget = target;
@@ -61,10 +64,6 @@ public abstract class Character : MonoBehaviour
         {
             Attack();
         }
-        else if (attackTarget == null)
-        {
-
-        }
     }
 
     protected void Move()
@@ -73,7 +72,7 @@ public abstract class Character : MonoBehaviour
         if (isAttacking == true)
         {
             StopCoroutine("Melee");
-            StopCoroutine("Shoot");
+            weapon.GetComponent<Gun>().StopCoroutine("Shoot");
             distanceToEnemy = 0f;
             enemyInRange = false;
             isAttacking = false;
@@ -118,9 +117,10 @@ public abstract class Character : MonoBehaviour
             {
                 StartCoroutine("Melee");
             }
-            else if (distanceToEnemy > 3f && isAttacking == false) //Also if total ammo > 0
+            else if (distanceToEnemy > 3f && isAttacking == false && weapon != null)
             {
-                StartCoroutine("Shoot");
+                oldAttackTarget = attackTarget;
+                weapon.GetComponent<Gun>().RangeAttack();
             }
         }
         else
@@ -133,33 +133,10 @@ public abstract class Character : MonoBehaviour
         Debug.Log("Started MELEE attack");
         isAttacking = true;
         target = transform.position;
-        StopCoroutine(Shoot());
+        weapon.GetComponent<Gun>().StopCoroutine("Shoot");
         yield return new WaitForSeconds(1);
         attackTarget.GetComponent<Character>().health -= 10;
         isAttacking = false;
-    }
-    protected IEnumerator Shoot() //Launch a bullet at attackTarget
-    {
-        if (ammo > 0)
-        {
-            Debug.Log("Started RANGE attack");
-            isAttacking = true;
-            ammo -= 1;
-            target = transform.position;
-            StopCoroutine(Melee());
-            //Launch a bullet
-            yield return new WaitForSeconds(1);
-            Vector3 shootTo = new Vector3(Random.Range(attackTarget.transform.position.x - 0.5f, attackTarget.transform.position.x + 0.5f), Random.Range(attackTarget.transform.position.y - 0.5f, attackTarget.transform.position.y + 0.5f), Random.Range(attackTarget.transform.position.z - 0.5f, attackTarget.transform.position.z + 0.5f));
-            GameObject spawnedBullet = Instantiate(bullet, shootFrom.transform.position, shootFrom.transform.rotation);
-            spawnedBullet.GetComponent<Bullet>().ShootTo(shootTo);
-
-            //Rough aiming at the attackTarget
-            isAttacking = false;
-        }
-        else
-        {
-            //reload
-        }
     }
     protected IEnumerator GetSpeed()
     {
@@ -197,4 +174,23 @@ public abstract class Character : MonoBehaviour
         }
     }
 
+    protected void ChangeAnimation()
+    {
+        if (isMoving == true && isAttacking == false)
+        {
+            charAnimator.SetBool("isWalking", true);
+            charAnimator.SetBool("isIdle", false);
+        }
+        else if (isMoving == false && isAttacking == false)
+        {
+            charAnimator.SetBool("isWalking", false);
+            charAnimator.SetBool("isIdle", true);
+
+        }
+        else if(isMoving == false && isAttacking == true)
+        {
+            charAnimator.SetBool("isWalking", false);
+            charAnimator.SetBool("isIdle", true);
+        }
+    }
 }

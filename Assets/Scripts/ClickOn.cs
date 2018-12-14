@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ClickOn : MonoBehaviour {
+public class ClickOn : MonoBehaviour
+{
 
     [SerializeField]
     private Material notSelected;
@@ -14,17 +15,18 @@ public class ClickOn : MonoBehaviour {
     [HideInInspector]
     public bool currentlySelected = false;
 
-	void Start () {
+    void Start()
+    {
 
         myRend = GetComponent<MeshRenderer>();
         Camera.main.gameObject.GetComponent<Click>().selectableObjects.Add(this.gameObject);
         ClickMe();
-	}
-	
+    }
 
-	public void ClickMe()
+
+    public void ClickMe()
     {
-        if(currentlySelected == false)
+        if (currentlySelected == false)
         {
             myRend.material = notSelected;
         }
@@ -34,3 +36,4 @@ public class ClickOn : MonoBehaviour {
         }
     }
 }
+

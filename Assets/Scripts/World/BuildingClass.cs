@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public  class BuildingClass : MonoBehaviour {
+public class BuildingClass : MonoBehaviour
+{
 
     [SerializeField]
     protected int health;
@@ -17,14 +18,16 @@ public  class BuildingClass : MonoBehaviour {
 
 
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         health = 100;
         capturePercent = 0;
 
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update()
+    {
         ManageHealth();
 
     }
@@ -42,7 +45,7 @@ public  class BuildingClass : MonoBehaviour {
     }
     public IEnumerator Capture(string capturingFaction)
     {
-        if(capturePercent >= 100)
+        if (capturePercent >= 100)
         {
             faction = capturingFaction;
         }

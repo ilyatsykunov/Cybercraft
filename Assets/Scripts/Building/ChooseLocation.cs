@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class ChoseLocation : MonoBehaviour {
+public class ChoseLocation : MonoBehaviour
+{
 
     [SerializeField]
     protected bool isBeingMoved;
@@ -16,16 +17,18 @@ public class ChoseLocation : MonoBehaviour {
     private float yAxis;
 
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
 
         yAxis = 2f;
         isBeingMoved = true;
         canBePlaced = true;
     }
-	
-	// Update is called once per frame
-	void Update () {
-        if(isBeingMoved == true)
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (isBeingMoved == true)
         {
             FollowMouse();
             PlaceBuilding();
@@ -70,7 +73,7 @@ public class ChoseLocation : MonoBehaviour {
         RaycastHit rayHit;
         if (Physics.Raycast(transform.position, -Vector3.up, out rayHit, Mathf.Infinity))
         {
-            if(rayHit.collider.tag == "Ground")
+            if (rayHit.collider.tag == "Ground")
             {
                 distanceToGround = rayHit.distance;
             }

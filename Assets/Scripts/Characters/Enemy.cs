@@ -2,24 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WorldController : MonoBehaviour
-{
-
+public class Enemy : Character {
 
     // Use this for initialization
-    void Start()
+    protected override void Awake()
     {
 
+        base.Awake();
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void Update ()
     {
-
-    }
-
-    public void SpawnBuilding(GameObject building)
-    {
-        Instantiate(building);
+        base.Update();
     }
 }

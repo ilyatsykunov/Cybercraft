@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SelectBox : MonoBehaviour {
+public class SelectBox : MonoBehaviour
+{
 
     [SerializeField]
     private RectTransform selectSquareImage;
@@ -16,15 +17,17 @@ public class SelectBox : MonoBehaviour {
     Vector3 endPos;
 
 
-	void Awake () {
+    void Awake()
+    {
         selectSquareImage.gameObject.SetActive(false);
 
         selectedObjects = new List<GameObject>();
         selectableObjects = new List<GameObject>();
-	}
-	
+    }
 
-	void Update () {
+
+    void Update()
+    {
 
         if (Input.GetMouseButtonDown(0))
         {
@@ -63,5 +66,5 @@ public class SelectBox : MonoBehaviour {
             selectSquareImage.sizeDelta = new Vector2(sizeX, sizeY);
 
         }
-	}
+    }
 }

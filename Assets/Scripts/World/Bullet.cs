@@ -2,17 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour {
+public class Bullet : MonoBehaviour
+{
 
     private int speed;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
         speed = 10;
-	}
-	
-	// Update is called once per frame
-	void Update () {
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
         transform.position += transform.right * speed * Time.deltaTime;
 
     }
@@ -24,7 +27,7 @@ public class Bullet : MonoBehaviour {
     }
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.gameObject.tag == "Building" || collision.gameObject.tag == "Enemy" || collision.gameObject.tag == "Player")
+        if (collision.gameObject.tag == "Building" || collision.gameObject.tag == "Enemy" || collision.gameObject.tag == "Player")
         {
             Destroy(gameObject);
         }
