@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-
+    public GameObject launchedBy;
     private int speed;
 
     // Use this for initialization

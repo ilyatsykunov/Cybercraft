@@ -18,10 +18,10 @@ public class Hero : Character
     // Update is called once per frame
     protected override void Update()
     {
+        base.Update();
         if (gameObject.GetComponent<ClickOn>().currentlySelected == true)
         {
             GetDirection();
-            base.Update();
         }
     }
     protected void GetDirection()

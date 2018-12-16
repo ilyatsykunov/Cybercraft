@@ -23,6 +23,7 @@ public abstract class Character : Human
     protected bool enemyInRange;
     [SerializeField]
     protected float distanceToEnemy;
+    protected Vector3 directionToEnemy;
     [SerializeField]
     protected GameObject shootFrom;
     [SerializeField]
@@ -51,6 +52,16 @@ public abstract class Character : Human
         {
             Attack();
         }
+        else if (attackTarget != null && attackTarget.GetComponent<Human>().isAlive == false && isAttacking == true)
+        {
+            StopCoroutine("Melee");
+            weapon.GetComponent<Gun>().StopCoroutine("Shoot");
+            distanceToEnemy = 0f;
+            enemyInRange = false;
+            isAttacking = false;
+            attackTarget = null;
+            oldAttackTarget = null;
+        }
     }
 
     protected void Move()
@@ -70,7 +81,7 @@ public abstract class Character : Human
     {
         target = transform.position;
         distanceToEnemy = Vector3.Distance(gameObject.transform.position, attackTarget.transform.position);
-        Vector3 directionToEnemy = (attackTarget.transform.position - transform.position).normalized;
+        directionToEnemy = (attackTarget.transform.position - transform.position).normalized;
         gameObject.transform.LookAt(attackTarget.transform.position);
         if (!Physics.Raycast(gameObject.transform.position, directionToEnemy, distanceToEnemy, ignoreMask) && (!Physics.Raycast(shootFrom.transform.position, directionToEnemy, distanceToEnemy, ignoreMask)))
         {
@@ -86,7 +97,7 @@ public abstract class Character : Human
             {
                 StartCoroutine("Melee");
             }
-            else if (distanceToEnemy > 3f && isAttacking == false && weapon != null)
+            else if (distanceToEnemy > 3f && distanceToEnemy < 15f && isAttacking == false && weapon != null)
             {
                 oldAttackTarget = attackTarget;
                 weapon.GetComponent<Gun>().RangeAttack();
@@ -126,6 +137,10 @@ public abstract class Character : Human
         {
             Debug.Log(gameObject.name + " " + health);
             health -= 10;
+            if (attackTarget == null && isMoving == false) //Assign shooter as the enemy
+            {
+                attackTarget = collision.gameObject.GetComponent<Bullet>().launchedBy;
+            }
         }
     }
 

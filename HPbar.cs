@@ -5,22 +5,16 @@ using UnityEngine.UI;
 
 public class HPbar : MonoBehaviour
 {
-
     public Canvas canvas;
     public Image healthBar;
     public GameObject healthBarPrefab;
     private Human parentScript;
 
     // Use this for initialization
-    void Start()
+    void Awake()
     {
+        canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
         parentScript = GetComponentInParent<Human>();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
         if (healthBar != null)
         {
             ChangeSizeOfHealthBar();
@@ -33,6 +27,11 @@ public class HPbar : MonoBehaviour
             spawnImage.transform.SetParent(canvas.transform, false);
             healthBar = spawnImage.GetComponent<Image>();
         }
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
 
 
     }

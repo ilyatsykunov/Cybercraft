@@ -72,6 +72,7 @@ public abstract class Gun : MonoBehaviour {
             Vector3 shootTo = new Vector3(Random.Range(attackTarget.transform.position.x - 0.5f, attackTarget.transform.position.x + 0.5f), Random.Range(attackTarget.transform.position.y - 1f, attackTarget.transform.position.y + 1f), Random.Range(attackTarget.transform.position.z - 0.5f, attackTarget.transform.position.z + 0.5f));
             GameObject spawnedBullet = Instantiate(bulletPrefab, shootFrom.transform.position, shootFrom.transform.rotation);
             spawnedBullet.GetComponent<Bullet>().ShootTo(shootTo);
+            spawnedBullet.GetComponent<Bullet>().launchedBy = parentCharacter;
         }
         parentCharacter.GetComponent<Character>().isAttacking = false;
         StopCoroutine("Shoot");

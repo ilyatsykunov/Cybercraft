@@ -10,6 +10,7 @@ public abstract class Human : MonoBehaviour {
 
     protected float speed;
     public int health;
+    public bool isAlive;
 
     [SerializeField]
     protected bool isMoving;
@@ -22,6 +23,7 @@ public abstract class Human : MonoBehaviour {
 
     // Use this for initialization
     protected virtual void Awake () {
+        isAlive = true;
         health = 100;
         target = transform.position;
         isMoving = false;
@@ -48,6 +50,8 @@ public abstract class Human : MonoBehaviour {
     }
     protected void Death()
     {
+        StopAllCoroutines();
+        isAlive = false;
         gameObject.SetActive(false);
     }
     protected IEnumerator GetSpeed()

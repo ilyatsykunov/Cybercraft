@@ -9,7 +9,7 @@ public abstract class Building : MonoBehaviour
     protected int health;
     [SerializeField]
     public string faction;
-    protected GameObject doors;
+    public GameObject doors;
 
     protected bool isBeingCaptured;
     [SerializeField]
@@ -22,7 +22,6 @@ public abstract class Building : MonoBehaviour
     {
         health = 100;
         capturePercent = 0;
-
     }
 
     // Update is called once per frame

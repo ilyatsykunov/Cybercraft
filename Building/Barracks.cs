@@ -35,16 +35,27 @@ public class Barracks : Building {
         {
             if (isTraining == false)
             {
-                StartCoroutine("Training");
-                Instantiate(unit, doors.transform.position, unit.transform.rotation);
-                queue.Remove(unit);
+                StartCoroutine("Training", unit);
             }
         }
     }
-    protected IEnumerator Training()
+    public void CancelSpawn(GameObject unitToSpawn)
+    {
+        if(queue[0] == unitToSpawn)
+        {
+            StopCoroutine("Training");
+        }
+        else
+        {
+            queue.Remove(unitToSpawn);
+        }
+    }
+    public IEnumerator Training(GameObject unit)
     {
         isTraining = true;
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(15f);
+        Instantiate(unit, doors.transform.position, unit.transform.rotation);
+        queue.Remove(unit);
         isTraining = false;
     }
 }
