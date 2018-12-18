@@ -50,6 +50,10 @@ public abstract class Character : Human
         }
         if (attackTarget != null && isAttacking == false)
         {
+            if (weapon.GetComponent<Gun>().canShoot == false)
+            {
+                TakeCover();
+            }
             Attack();
         }
         else if (attackTarget != null && attackTarget.GetComponent<Human>().isAlive == false && isAttacking == true)
@@ -61,6 +65,18 @@ public abstract class Character : Human
             isAttacking = false;
             attackTarget = null;
             oldAttackTarget = null;
+        }
+    }
+    protected void TakeCover()
+    {
+        NavMeshHit hit;
+        if (NavMesh.FindClosestEdge(transform.position, out hit, NavMesh.AllAreas))
+        {
+            target = hit.normal;
+            /*if (Vector3.Dot(hit.normal, (attackTarget.transform.position - hit.position)) < 0)
+            {
+                target = hit.position;
+            }*/
         }
     }
 
@@ -123,11 +139,11 @@ public abstract class Character : Human
         GameObject[] buildings = GameObject.FindGameObjectsWithTag("Building");
         foreach (GameObject building in buildings)
         {
-            BuildingClass buildingClass = building.GetComponent<BuildingClass>();
+            Building buildingScript = building.GetComponent<Building>();
             float distance = Vector3.Distance(gameObject.transform.position, building.transform.position);
-            if (buildingClass.faction != faction && distance < 10f)
+            if (buildingScript.faction != faction && distance < 10f)
             {
-                buildingClass.StartCoroutine(buildingClass.Capture(faction));
+                buildingScript.StartCoroutine(buildingScript.Capture(faction));
             }
         }
     }

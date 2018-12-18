@@ -15,13 +15,15 @@ public abstract class Building : MonoBehaviour
     [SerializeField]
     protected int capturePercent;
 
-
+    //public WorldController WC;
+    public GameObject screen;
 
     // Use this for initialization
     protected virtual void Start()
     {
         health = 100;
         capturePercent = 0;
+        //WC = GameObject.Find("World").GetComponent<WorldController>();
     }
 
     // Update is called once per frame

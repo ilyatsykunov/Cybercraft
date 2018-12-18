@@ -36,6 +36,10 @@ public class Hero : Character
                 {
                     attackTarget = rayHit.collider.gameObject;
                 }
+                else if (rayHit.collider.gameObject.tag == "Building")
+                {
+                    buildingToEnter = rayHit.collider.gameObject;
+                }
                 else
                 {
                     attackTarget = null;

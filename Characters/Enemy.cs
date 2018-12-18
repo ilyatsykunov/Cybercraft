@@ -24,7 +24,6 @@ public class Enemy : Character {
         if(attackTarget == null && isMoving == false)
         {
             DefensiveState();
-            TakeCover();
         }
         else
         {
@@ -54,16 +53,7 @@ public class Enemy : Character {
             }
         }
     }
-    protected void TakeCover()
-    {
-        NavMeshHit hit;
-        if(NavMesh.FindClosestEdge(transform.position, out hit, ignoreMask))
-        {
-            if(Vector3.Dot(hit.normal, (attackTarget.transform.position - hit.position)) < 0)
-            {
-                target = hit.position;
-            }
-        }
+
         /*
         GameObject[] buildings = GameObject.FindGameObjectsWithTag("Building");
         GameObject closestObstacle = null;
@@ -78,6 +68,4 @@ public class Enemy : Character {
             }
         }
         */
-
-    }
 }

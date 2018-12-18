@@ -16,13 +16,13 @@ public class Bullet : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.position += transform.right * speed * Time.deltaTime;
+        transform.position += transform.forward * speed * Time.deltaTime;
 
     }
     public void ShootTo(Vector3 shootTo)
     {
         transform.LookAt(shootTo);
-        gameObject.transform.Rotate(0f, -90f, 0f, Space.World);
+        //gameObject.transform.Rotate(45f, -90f, 45f, Space.World);
 
     }
     private void OnCollisionEnter(Collision collision)

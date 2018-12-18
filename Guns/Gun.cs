@@ -5,12 +5,12 @@ using UnityEngine;
 public abstract class Gun : MonoBehaviour {
 
     //Ammo
-    protected int magazineTotal;
+    public int magazineTotal;
     [SerializeField]
-    protected int magazineCurrent;
-    protected int totalCapacity;
+    public int magazineCurrent;
+    public int totalCapacity;
     [SerializeField]
-    protected int currentTotal;
+    public int currentTotal;
     //Stats
     protected float firingRate;
     protected float maxDamage;
@@ -36,7 +36,7 @@ public abstract class Gun : MonoBehaviour {
         }
         if(shootFrom == null)
         {
-            shootFrom = gameObject.transform.GetChild(0).gameObject;
+            shootFrom = gameObject.transform.Find("Shoot from").gameObject;
         }
         
     }
@@ -70,7 +70,7 @@ public abstract class Gun : MonoBehaviour {
         if (oldAttackTarget == attackTarget)
         {
             Vector3 shootTo = new Vector3(Random.Range(attackTarget.transform.position.x - 0.5f, attackTarget.transform.position.x + 0.5f), Random.Range(attackTarget.transform.position.y - 1f, attackTarget.transform.position.y + 1f), Random.Range(attackTarget.transform.position.z - 0.5f, attackTarget.transform.position.z + 0.5f));
-            GameObject spawnedBullet = Instantiate(bulletPrefab, shootFrom.transform.position, shootFrom.transform.rotation);
+            GameObject spawnedBullet = Instantiate(bulletPrefab, shootFrom.transform.position, Quaternion.identity) as GameObject;
             spawnedBullet.GetComponent<Bullet>().ShootTo(shootTo);
             spawnedBullet.GetComponent<Bullet>().launchedBy = parentCharacter;
         }

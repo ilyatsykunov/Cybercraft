@@ -7,6 +7,8 @@ public class Click : MonoBehaviour
 
     [SerializeField]
     private LayerMask clickablesLayer;
+    [SerializeField]
+    private LayerMask obstaclesLayer;
 
     private List<GameObject> selectedObjects;
 
@@ -17,6 +19,8 @@ public class Click : MonoBehaviour
     private Vector3 mousePos1;
     private Vector3 mousePos2;
 
+    public WorldController WC;
+
     private void Awake()
     {
         selectableObjects = new List<GameObject>();
@@ -25,7 +29,7 @@ public class Click : MonoBehaviour
 
     void Start()
     {
-
+        WC = GameObject.Find("World").GetComponent<WorldController>();
     }
 
 
@@ -41,6 +45,8 @@ public class Click : MonoBehaviour
 
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out rayHit, Mathf.Infinity, clickablesLayer))
             {
+                WC.ActivateScreen(rayHit.collider.GetComponent<Human>().screen);
+
                 ClickOn clickOnScript = rayHit.collider.GetComponent<ClickOn>();
 
                 if (Input.GetKey(KeyCode.LeftControl))
@@ -70,9 +76,18 @@ public class Click : MonoBehaviour
 
 
             }
-        }
+            else if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out rayHit, Mathf.Infinity, obstaclesLayer))
+            {
+                ClickOn clickOnScript = rayHit.collider.GetComponent<ClickOn>();
+                if(rayHit.collider.tag == "Building")
+                {
+                    WC.ActivateScreen(rayHit.collider.GetComponent<Building>().screen);
+                }
+            }
 
-        if (Input.GetMouseButtonUp(0))
+            }
+
+            if (Input.GetMouseButtonUp(0))
         {
             mousePos2 = Camera.main.ScreenToViewportPoint(Input.mousePosition);
 
@@ -128,6 +143,7 @@ public class Click : MonoBehaviour
 
     void ClearSelection()
     {
+        WC.ActivateScreen(WC.buildScreen);
         if (selectedObjects.Count > 0)
         {
             foreach (GameObject obj in selectedObjects)

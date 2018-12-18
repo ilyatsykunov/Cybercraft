@@ -18,8 +18,12 @@ public abstract class Human : MonoBehaviour {
 
     [SerializeField]
     public Vector3 target;
+    public GameObject buildingToEnter;
+    public bool isInsideBuilding;
 
     protected Animator charAnimator;
+
+    public GameObject screen;
 
     // Use this for initialization
     protected virtual void Awake () {
@@ -53,6 +57,31 @@ public abstract class Human : MonoBehaviour {
         StopAllCoroutines();
         isAlive = false;
         gameObject.SetActive(false);
+    }
+    protected void EnterBuilding()
+    {
+        if(buildingToEnter != null)
+        {
+            GameObject door = buildingToEnter.transform.Find("Door").gameObject;
+            target = door.transform.position;
+            if(transform.position == new Vector3(target.x, transform.position.y, target.z))
+            {
+                isInsideBuilding = true;
+            }
+            else
+            {
+                isInsideBuilding = false;
+            }
+        }
+        if (isInsideBuilding)
+        {
+            gameObject.SetActive(false);
+        }
+        else
+        {
+            gameObject.SetActive(true);
+        }
+
     }
     protected IEnumerator GetSpeed()
     {
