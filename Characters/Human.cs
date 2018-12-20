@@ -25,6 +25,7 @@ public abstract class Human : MonoBehaviour {
 
     public GameObject screen;
     public GameObject canvas;
+    public string textToDisplay;
 
     // Use this for initialization
     protected virtual void Awake () {
@@ -39,6 +40,7 @@ public abstract class Human : MonoBehaviour {
 
     // Update is called once per frame
     protected virtual void Update () {
+        ManageHealth();
         StartCoroutine("GetSpeed");
     }
     protected void ManageHealth()

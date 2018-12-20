@@ -5,42 +5,24 @@ using UnityEngine.UI;
 
 public class HPbar : MonoBehaviour
 {
-    public Canvas canvas;
-    public Image healthBar;
-    public GameObject healthBarPrefab;
     private Human parentScript;
+    private float originalScale;
 
-    // Use this for initialization
     void Awake()
     {
-        canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
+        originalScale = gameObject.transform.localScale.x;
         parentScript = GetComponentInParent<Human>();
-        if (healthBar != null)
-        {
-            ChangeSizeOfHealthBar();
-            Vector3 hpBarPosition = Camera.main.WorldToScreenPoint(this.transform.position);
-            healthBar.transform.position = hpBarPosition;
-        }
-        else
-        {
-            var spawnImage = Instantiate(healthBarPrefab) as GameObject;
-            spawnImage.transform.SetParent(canvas.transform, false);
-            healthBar = spawnImage.GetComponent<Image>();
-        }
     }
-
-    // Update is called once per frame
     void Update()
     {
-
-
+        ChangeSizeOfHealthBar();
+        transform.eulerAngles = new Vector3(Camera.main.transform.eulerAngles.x, Camera.main.transform.parent.gameObject.transform.eulerAngles.y, transform.eulerAngles.z);
     }
     void ChangeSizeOfHealthBar()
     {
-        int health = parentScript.health;
-        float width = 30 * health / 100;
-        var healthBarTransform = healthBar.gameObject.transform as RectTransform;
-        healthBarTransform.sizeDelta = new Vector2(width, healthBarTransform.sizeDelta.y);
+        float health = parentScript.health * originalScale / 100;
+        float scrollIncrease = Camera.main.transform.parent.gameObject.transform.position.y * originalScale / 10;
+        gameObject.transform.localScale = new Vector3(health * scrollIncrease * 5, scrollIncrease, gameObject.transform.localScale.z);
     }
 }
 

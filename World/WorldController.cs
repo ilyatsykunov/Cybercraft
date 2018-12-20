@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class WorldController : MonoBehaviour
 {
+    public Text textGO;
     public Canvas canvas;
     public GameObject emptyScreen;
     public GameObject buildScreen;
@@ -23,5 +25,9 @@ public class WorldController : MonoBehaviour
         unitSpawnScreen1.SetActive(false);
         buildingSpawnScreen.SetActive(false);
         screenToActivate.SetActive(true);
+    }
+    public void ChangeText(string textToDisplay)
+    {
+        textGO.text = textToDisplay;
     }
 }

@@ -35,18 +35,15 @@ public class Click : MonoBehaviour
 
     void Update()
     {
-
         if (Input.GetMouseButtonDown(0))
         {
             mousePos1 = Camera.main.ScreenToViewportPoint(Input.mousePosition);
-
-
             RaycastHit rayHit;
 
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out rayHit, Mathf.Infinity, clickablesLayer))
             {
                 WC.ActivateScreen(rayHit.collider.GetComponent<Human>().screen);
-
+                WC.ChangeText(rayHit.collider.GetComponent<Human>().textToDisplay);
                 ClickOn clickOnScript = rayHit.collider.GetComponent<ClickOn>();
 
                 if (Input.GetKey(KeyCode.LeftShift))
@@ -82,6 +79,7 @@ public class Click : MonoBehaviour
                 if(rayHit.collider.tag == "Building")
                 {
                     WC.ActivateScreen(rayHit.collider.GetComponent<Building>().screen);
+                    WC.ChangeText(rayHit.collider.GetComponent<Building>().textToDisplay);
                     ClickOn clickOnScriptBuilding = rayHit.collider.GetComponent<ClickOn>();
                     selectedObjects.Add(rayHit.collider.gameObject);
                     clickOnScriptBuilding.currentlySelected = true;

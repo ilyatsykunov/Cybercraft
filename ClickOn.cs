@@ -14,16 +14,13 @@ public class ClickOn : MonoBehaviour
 
     void Start()
     {
-
-        //ren = renHolder.GetComponent<SkinnedMeshRenderer>();
         Camera.main.gameObject.GetComponent<Click>().selectableObjects.Add(this.gameObject);
         ClickMe();
     }
     private void Update()
     {
-        if(currentlySelected == true && gameObject.GetComponent<Human>().target != null)
+        if(currentlySelected == true && gameObject.GetComponent<Human>().target != null && gameObject.GetComponent<Hero>() != null)
         {
-            
             if(gameObject.GetComponent<Human>().target != oldTarget)
             {
                 StopAllCoroutines();
@@ -33,7 +30,6 @@ public class ClickOn : MonoBehaviour
                 oldTarget = gameObject.GetComponent<Human>().target;
                 StartCoroutine("Wait");
             }
-
         }
     }
 
@@ -43,12 +39,10 @@ public class ClickOn : MonoBehaviour
         if (currentlySelected == false && selectionLight != null)
         {
             selectionLight.SetActive(false);
-            //ren.material = notSelected;
         }
         else if (currentlySelected == true && selectionLight != null)
         {
             selectionLight.SetActive(true);
-            //ren.material = selected;
         }
     }
 

@@ -5,8 +5,6 @@ using UnityEngine.UI;
 
 public class Minimap : MonoBehaviour {
 
-    public List<GameObject> units = new List<GameObject>();
-
     public Canvas canvas;
     public GameObject miniMapHolder;
     public Image square;
@@ -32,16 +30,14 @@ public class Minimap : MonoBehaviour {
     {
         foreach(mapPoint point in listOfPoints)
         {
-            if(point.objectIn3DSpace.activeInHierarchy == true)
+            if (point.objectIn3DSpace.activeInHierarchy == true)
             {
                 point.UpdateLocation();
             }
             else
             {
-                Destroy(point.gameObject);
-                //listOfPoints.Remove(point);
+                Destroy(point.objectIn2DSpace);
             }
-            
         }
     }
     void DrawMap()

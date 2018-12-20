@@ -24,27 +24,48 @@ public abstract class Gun : MonoBehaviour {
     [SerializeField]
     protected GameObject bulletPrefab;
 
+    public GameObject gunHolder;
+
     protected virtual void Awake()
     {
-        shootFromLight = shootFrom.GetComponent<Light>();
+        AssignProperties();
     }
 
     protected virtual void Update()
     {
-        if(parentCharacter == null) 
+        transform.position = gunHolder.transform.position;
+        transform.rotation = gunHolder.transform.rotation;
+        if (parentCharacter == null) 
         {
             if(gameObject.transform.parent.gameObject != null)
             {
                 parentCharacter = gameObject.transform.parent.gameObject;
                 parentCharacter.GetComponent<Character>().weapon = gameObject;
+                parentCharacter.GetComponent<Character>().shootFrom = shootFrom;
             }
-            
         }
-        if(shootFrom == null)
+        AssignProperties();
+    }
+
+    protected void AssignProperties()
+    {
+        if (shootFrom == null)
         {
             shootFrom = gameObject.transform.Find("Shoot from").gameObject;
         }
-        
+        if (shootFromLight == null)
+        {
+            shootFromLight = shootFrom.GetComponent<Light>();
+        }
+        if (parentCharacter == null)
+        {
+            if (gameObject.transform.parent.gameObject != null)
+            {
+                parentCharacter = gameObject.transform.parent.gameObject;
+                parentCharacter.GetComponent<Character>().weapon = gameObject;
+                parentCharacter.GetComponent<Character>().shootFrom = shootFrom;
+            }
+        }
     }
 
     public void RangeAttack()
@@ -75,7 +96,7 @@ public abstract class Gun : MonoBehaviour {
         yield return new WaitForSeconds(firingRate);
         if (oldAttackTarget == attackTarget)
         {
-            Vector3 shootTo = new Vector3(Random.Range(attackTarget.transform.position.x - 0.5f, attackTarget.transform.position.x + 0.5f), Random.Range(attackTarget.transform.position.y - 1f, attackTarget.transform.position.y + 1f), Random.Range(attackTarget.transform.position.z - 0.5f, attackTarget.transform.position.z + 0.5f));
+            Vector3 shootTo = new Vector3(Random.Range(attackTarget.transform.position.x - 0.1f, attackTarget.transform.position.x + 0.1f), Random.Range(attackTarget.transform.position.y - 0.5f, attackTarget.transform.position.y + 0.5f), Random.Range(attackTarget.transform.position.z - 0.5f, attackTarget.transform.position.z + 0.5f));
             GameObject spawnedBullet = Instantiate(bulletPrefab, shootFrom.transform.position, Quaternion.identity) as GameObject;
             spawnedBullet.GetComponent<Bullet>().ShootTo(shootTo);
             spawnedBullet.GetComponent<Bullet>().launchedBy = parentCharacter;

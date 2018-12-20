@@ -19,6 +19,7 @@ public abstract class Building : MonoBehaviour
     //public WorldController WC;
     public GameObject screen;
     public GameObject canvas;
+    public string textToDisplay;
 
     // Use this for initialization
     protected virtual void Start()

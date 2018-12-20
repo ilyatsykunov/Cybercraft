@@ -5,7 +5,7 @@ using UnityEngine;
 public class Pistol : Gun {
 
 	// Use this for initialization
-	protected void Start () {
+	protected override void Awake() {
 	//Ammo
     magazineTotal = 9;
     magazineCurrent = 9;

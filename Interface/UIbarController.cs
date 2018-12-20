@@ -14,7 +14,6 @@ public class UIbarController : MonoBehaviour {
     void Start () {
         img = gameObject.GetComponent<Image>();
         listOfPics.Add(img);
-        StartCoroutine("RandomColor");
     }
     private void Update()
     {

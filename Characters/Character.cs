@@ -9,25 +9,22 @@ using UnityEngine.AI;
 public abstract class Character : Human
 {
     public string faction;
-
-    protected Vector2 direction;
     public Vector3 oldTarget;
 
     //Figthing
     public GameObject weapon;
     public bool isAttacking;
+    public bool shouldBeAttacking;
     public bool isReloading;
     public GameObject attackTarget;
+    [HideInInspector]
     public GameObject oldAttackTarget;
     [SerializeField]
     protected bool enemyInRange;
     [SerializeField]
     protected float distanceToEnemy;
     protected Vector3 directionToEnemy;
-    [SerializeField]
-    protected GameObject shootFrom;
-    [SerializeField]
-    protected GameObject bullet;
+    public GameObject shootFrom;
     public LayerMask ignoreMask;
 
     //MiniMap
@@ -44,7 +41,6 @@ public abstract class Character : Human
     {
         base.Update();
         CaptureBuilding();
-        ManageHealth();
         ChangeAnimation();
         if ((target != transform.position && isMoving == false) || oldTarget != target)
         {
@@ -59,15 +55,9 @@ public abstract class Character : Human
             }
             Attack();
         }
-        else if (attackTarget != null && attackTarget.GetComponent<Human>().isAlive == false && isAttacking == true)
+        if (attackTarget != null && attackTarget.GetComponent<Human>().isAlive == false && isAttacking == true)
         {
-            StopCoroutine("Melee");
-            weapon.GetComponent<Gun>().StopCoroutine("Shoot");
-            distanceToEnemy = 0f;
-            enemyInRange = false;
-            isAttacking = false;
-            attackTarget = null;
-            oldAttackTarget = null;
+            RemoveTarget();
         }
     }
     protected void TakeCover()
@@ -85,19 +75,15 @@ public abstract class Character : Human
 
     protected void Move()
     {
-
         if (isAttacking == true)
         {
-            StopCoroutine("Melee");
-            weapon.GetComponent<Gun>().StopCoroutine("Shoot");
-            distanceToEnemy = 0f;
-            enemyInRange = false;
-            isAttacking = false;
+            RemoveTarget();
         }
         agent.SetDestination(target);
     }
     protected void Attack()
     {
+        shouldBeAttacking = true;
         target = transform.position;
         distanceToEnemy = Vector3.Distance(gameObject.transform.position, attackTarget.transform.position);
         directionToEnemy = (attackTarget.transform.position - transform.position).normalized;
@@ -152,34 +138,51 @@ public abstract class Character : Human
     }
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.tag == "Bullet") //Take bullet damage
+        if (collision.gameObject.tag == "Bullet")
         {
-            Debug.Log(gameObject.name + " " + health);
             health -= 10;
-            if (attackTarget == null && isMoving == false) //Assign shooter as the enemy
+            if (attackTarget == null && isMoving == false)
             {
                 attackTarget = collision.gameObject.GetComponent<Bullet>().launchedBy;
             }
         }
     }
+    protected void RemoveTarget()
+    {
+        StopCoroutine("Melee");
+        weapon.GetComponent<Gun>().StopCoroutine("Shoot");
+        distanceToEnemy = 0f;
+        enemyInRange = false;
+        isAttacking = false;
+        attackTarget = null;
+        oldAttackTarget = null;
+        shouldBeAttacking = false;
+    }
 
     protected void ChangeAnimation()
     {
-        if (isMoving == true && isAttacking == false)
+        if(shouldBeAttacking == true)
         {
-            charAnimator.SetBool("isWalking", true);
             charAnimator.SetBool("isIdle", false);
-        }
-        else if (isMoving == false && isAttacking == false)
-        {
             charAnimator.SetBool("isWalking", false);
-            charAnimator.SetBool("isIdle", true);
+            charAnimator.SetBool("isRangeAttacking", true);
+        }
+        else if(shouldBeAttacking == false)
+        {
+            charAnimator.SetBool("isRangeAttacking", false);
+            if (isMoving == true)
+            {
+                charAnimator.SetBool("isWalking", true);
+                charAnimator.SetBool("isIdle", false);
+                charAnimator.SetBool("isRangeAttacking", false);
+            }
+            else if (isMoving == false)
+            {
+                charAnimator.SetBool("isWalking", false);
+                charAnimator.SetBool("isIdle", true);
+                charAnimator.SetBool("isRangeAttacking", false);
 
-        }
-        else if(isMoving == false && isAttacking == true)
-        {
-            charAnimator.SetBool("isWalking", false);
-            charAnimator.SetBool("isIdle", true);
+            }
         }
     }
 }

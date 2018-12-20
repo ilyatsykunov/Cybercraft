@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class mapPoint : MonoBehaviour {
+public class mapPoint{
 
     public GameObject objectIn3DSpace;
     public GameObject objectIn2DSpace;
@@ -11,7 +11,6 @@ public class mapPoint : MonoBehaviour {
     public void UpdateLocation()
     {
         location = new Vector2(objectIn3DSpace.transform.position.x, objectIn3DSpace.transform.position.z);
-        Debug.Log(location);
         objectIn2DSpace.transform.localPosition = location/2;
     }
 
