@@ -20,8 +20,14 @@ public abstract class Gun : MonoBehaviour {
     public GameObject parentCharacter;
     [SerializeField]
     protected GameObject shootFrom;
+    protected Light shootFromLight;
     [SerializeField]
     protected GameObject bulletPrefab;
+
+    protected virtual void Awake()
+    {
+        shootFromLight = shootFrom.GetComponent<Light>();
+    }
 
     protected virtual void Update()
     {
@@ -73,6 +79,7 @@ public abstract class Gun : MonoBehaviour {
             GameObject spawnedBullet = Instantiate(bulletPrefab, shootFrom.transform.position, Quaternion.identity) as GameObject;
             spawnedBullet.GetComponent<Bullet>().ShootTo(shootTo);
             spawnedBullet.GetComponent<Bullet>().launchedBy = parentCharacter;
+            StartCoroutine("LightSwitch");
         }
         parentCharacter.GetComponent<Character>().isAttacking = false;
         StopCoroutine("Shoot");
@@ -95,5 +102,11 @@ public abstract class Gun : MonoBehaviour {
         }
         parentCharacter.GetComponent<Character>().isReloading = false;
         StopCoroutine("Reload");
+    }
+    protected IEnumerator LightSwitch()
+    {
+        shootFromLight.enabled = true;
+        yield return new WaitForSeconds(0.15f);
+        shootFromLight.enabled = false;
     }
 }

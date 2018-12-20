@@ -24,6 +24,7 @@ public abstract class Human : MonoBehaviour {
     protected Animator charAnimator;
 
     public GameObject screen;
+    public GameObject canvas;
 
     // Use this for initialization
     protected virtual void Awake () {

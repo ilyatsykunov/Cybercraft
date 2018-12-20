@@ -12,6 +12,7 @@ public class Hero : Character
     // Use this for initialization
     protected override void Awake()
     {
+        screen = canvas.transform.Find("UnitScreen").gameObject;
         isSelected = false;
         base.Awake();
     }

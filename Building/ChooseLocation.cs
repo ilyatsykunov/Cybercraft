@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class ChoseLocation : MonoBehaviour
+public class ChooseLocation : MonoBehaviour
 {
 
     [SerializeField]
@@ -16,10 +16,15 @@ public class ChoseLocation : MonoBehaviour
     private float distanceToGround;
     private float yAxis;
 
+    private MeshRenderer rend;
+    public Material greenMaterial;
+    public Material redMaterial;
+    public Material[] originalMaterials;
+
     // Use this for initialization
     void Start()
     {
-
+        rend = gameObject.GetComponent<MeshRenderer>();
         yAxis = 2f;
         isBeingMoved = true;
         canBePlaced = true;
@@ -32,19 +37,54 @@ public class ChoseLocation : MonoBehaviour
         {
             FollowMouse();
             PlaceBuilding();
+            if(Input.GetKeyDown(KeyCode.Escape) || Input.GetMouseButtonDown(1))
+            {
+                Destroy(gameObject);
+            }
+            if(canBePlaced == false)
+            {
+                Material[] materials = rend.materials;
+                for(int i = 0; i < materials.Length; i++)
+                {
+                    materials[i] = redMaterial;
+                }
+                rend.materials = materials;
+            }
+            else
+            {
+                Material[] materials = rend.materials;
+                for (int i = 0; i < materials.Length; i++)
+                {
+                    materials[i] = greenMaterial;
+                }
+                rend.materials = materials;
+            }
         }
+        else
+        {
+            if(rend.materials != originalMaterials)
+            {
+                rend.materials = originalMaterials;
+            }
+        }
+        
     }
 
     void PlaceBuilding()
     {
+        if (Input.GetKey(KeyCode.R))
+        {
+            float rotateBy =  100f * Time.deltaTime;
+            gameObject.transform.Rotate(0f, rotateBy, 0f);
+        }
+
         if (Input.GetMouseButtonDown(0) && canBePlaced == true)
         {
+            
             gameObject.transform.position = new Vector3(mousePosition.x, 1f, mousePosition.z);
             isBeingMoved = false;
             GameObject world = GameObject.Find("World");
-            //REBAKE MAP
             world.GetComponent<NavMeshSurface>().BuildNavMesh();
-            //REBAKE MAP
         }
     }
 
@@ -56,6 +96,8 @@ public class ChoseLocation : MonoBehaviour
         {
             mousePosition = rayHit.point;
         }
+        gameObject.GetComponent<ClickOn>().currentlySelected = true;
+        gameObject.GetComponent<ClickOn>().ClickMe();
         //Make it float above the ground depending on surface height
         GetDistanceToGround();
         /*if (distanceToGround > 2f)
@@ -79,18 +121,19 @@ public class ChoseLocation : MonoBehaviour
             }
         }
     }
-    void OnCollisionStay(Collision collider)
+    private void OnTriggerStay(Collider other)
     {
-        if (collider.gameObject.tag == "Building")
+        if(other.gameObject.layer == LayerMask.NameToLayer("Obstacles") || other.gameObject.layer == LayerMask.NameToLayer("Road"))
         {
             canBePlaced = false;
         }
     }
-    void OnCollisionExit(Collision collider)
+    private void OnTriggerExit(Collider other)
     {
-        if (collider.gameObject.tag == "Building")
+        if (other.gameObject.layer == LayerMask.NameToLayer("Obstacles") || other.gameObject.layer == LayerMask.NameToLayer("Road"))
         {
             canBePlaced = true;
         }
     }
+
 }

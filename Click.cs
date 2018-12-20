@@ -49,7 +49,7 @@ public class Click : MonoBehaviour
 
                 ClickOn clickOnScript = rayHit.collider.GetComponent<ClickOn>();
 
-                if (Input.GetKey(KeyCode.LeftControl))
+                if (Input.GetKey(KeyCode.LeftShift))
                 {
                     if (clickOnScript.currentlySelected == false)
                     {
@@ -82,7 +82,15 @@ public class Click : MonoBehaviour
                 if(rayHit.collider.tag == "Building")
                 {
                     WC.ActivateScreen(rayHit.collider.GetComponent<Building>().screen);
+                    ClickOn clickOnScriptBuilding = rayHit.collider.GetComponent<ClickOn>();
+                    selectedObjects.Add(rayHit.collider.gameObject);
+                    clickOnScriptBuilding.currentlySelected = true;
+                    clickOnScriptBuilding.ClickMe();
                 }
+            }
+            else
+            {
+                ClearSelection();
             }
 
             }
@@ -97,7 +105,7 @@ public class Click : MonoBehaviour
             }
         }
 
-        if (Input.GetMouseButton(2))
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
             ClearSelection();
         }
@@ -107,7 +115,7 @@ public class Click : MonoBehaviour
     {
         List<GameObject> remObjects = new List<GameObject>();
 
-        if (!Input.GetKey(KeyCode.LeftControl))
+        if (!Input.GetKey(KeyCode.LeftShift))
         {
             ClearSelection();
         }

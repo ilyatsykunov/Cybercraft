@@ -30,6 +30,9 @@ public abstract class Character : Human
     protected GameObject bullet;
     public LayerMask ignoreMask;
 
+    //MiniMap
+    public GameObject miniMapPoint;
+
     // Use this for initialization
     protected override void Awake()
     {

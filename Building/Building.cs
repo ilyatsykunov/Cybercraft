@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public abstract class Building : MonoBehaviour
 {
@@ -17,10 +18,12 @@ public abstract class Building : MonoBehaviour
 
     //public WorldController WC;
     public GameObject screen;
+    public GameObject canvas;
 
     // Use this for initialization
     protected virtual void Start()
     {
+        screen = canvas.transform.Find("UnitSpawnScreen").gameObject;
         health = 100;
         capturePercent = 0;
         //WC = GameObject.Find("World").GetComponent<WorldController>();

@@ -5,12 +5,9 @@ using UnityEngine;
 public class ClickOn : MonoBehaviour
 {
 
-    [SerializeField]
-    private Material notSelected;
-    [SerializeField]
-    private Material selected;
-
-    //private MeshRenderer myRend;
+    public GameObject selectionLight;
+    public GameObject targetHolder;
+    public Vector3 oldTarget;
 
     [HideInInspector]
     public bool currentlySelected = false;
@@ -18,22 +15,47 @@ public class ClickOn : MonoBehaviour
     void Start()
     {
 
-        //myRend = GetComponent<MeshRenderer>();
+        //ren = renHolder.GetComponent<SkinnedMeshRenderer>();
         Camera.main.gameObject.GetComponent<Click>().selectableObjects.Add(this.gameObject);
         ClickMe();
+    }
+    private void Update()
+    {
+        if(currentlySelected == true && gameObject.GetComponent<Human>().target != null)
+        {
+            
+            if(gameObject.GetComponent<Human>().target != oldTarget)
+            {
+                StopAllCoroutines();
+                targetHolder.SetActive(true);
+                Vector3 newPos = new Vector3(gameObject.GetComponent<Human>().target.x, targetHolder.transform.position.y, gameObject.GetComponent<Human>().target.z);
+                targetHolder.transform.position = newPos;
+                oldTarget = gameObject.GetComponent<Human>().target;
+                StartCoroutine("Wait");
+            }
+
+        }
     }
 
 
     public void ClickMe()
     {
-        if (currentlySelected == false)
+        if (currentlySelected == false && selectionLight != null)
         {
-            //myRend.material = notSelected;
+            selectionLight.SetActive(false);
+            //ren.material = notSelected;
         }
-        else
+        else if (currentlySelected == true && selectionLight != null)
         {
-            //myRend.material = selected;
+            selectionLight.SetActive(true);
+            //ren.material = selected;
         }
+    }
+
+    private IEnumerator Wait()
+    {
+        yield return new WaitForSeconds(1);
+        targetHolder.SetActive(false);
     }
 }
 
