@@ -39,25 +39,28 @@ public abstract class Character : Human
     // Update is called once per frame
     protected override void Update()
     {
-        base.Update();
-        CaptureBuilding();
-        ChangeAnimation();
-        if ((target != transform.position && isMoving == false) || oldTarget != target)
+        if(isAlive == true)
         {
-            oldTarget = target;
-            Move();
-        }
-        if (attackTarget != null && isAttacking == false)
-        {
-            if (weapon.GetComponent<Gun>().canShoot == false)
+            base.Update();
+            CaptureBuilding();
+            ChangeAnimation();
+            if ((target != transform.position && isMoving == false) || oldTarget != target)
             {
-                TakeCover();
+                oldTarget = target;
+                Move();
             }
-            Attack();
-        }
-        if (attackTarget != null && attackTarget.GetComponent<Human>().isAlive == false && isAttacking == true)
-        {
-            RemoveTarget();
+            if (attackTarget != null && isAttacking == false)
+            {
+                if (weapon.GetComponent<Gun>().canShoot == false)
+                {
+                    TakeCover();
+                }
+                Attack();
+            }
+            if (attackTarget != null && attackTarget.GetComponent<Human>().isAlive == false)
+            {
+                RemoveTarget();
+            }
         }
     }
     protected void TakeCover()

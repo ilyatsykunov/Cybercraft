@@ -51,16 +51,20 @@ public abstract class Human : MonoBehaviour {
         }
         if (health <= 0)
         {
-            health = 0;
-            Death();
+            if(isAlive == true)
+            {
+                health = 0;
+                StopAllCoroutines();
+                charAnimator.SetBool("isIdle", false);
+                charAnimator.SetBool("isWalking", false);
+                charAnimator.SetBool("isRangeAttacking", false);
+                charAnimator.SetBool("isDead", true);
+                StartCoroutine("Death");
+                isAlive = false;
+            }
         }
     }
-    protected void Death()
-    {
-        StopAllCoroutines();
-        isAlive = false;
-        gameObject.SetActive(false);
-    }
+
     protected void EnterBuilding()
     {
         if(buildingToEnter != null)
@@ -99,5 +103,10 @@ public abstract class Human : MonoBehaviour {
         {
             isMoving = false;
         }
+    }
+    protected IEnumerator Death()
+    {
+        yield return new WaitForSeconds(2f);
+        gameObject.SetActive(false);
     }
 }

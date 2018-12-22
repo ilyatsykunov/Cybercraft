@@ -27,7 +27,7 @@ public class Hero : Character
     }
     protected void GetDirection()
     {
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(1) && !Input.GetKey(KeyCode.LeftControl))
         {
             RaycastHit rayHit;
 

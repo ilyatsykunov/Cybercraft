@@ -25,16 +25,22 @@ public class Click : MonoBehaviour
     {
         selectableObjects = new List<GameObject>();
         selectedObjects = new List<GameObject>();
-    }
-
-    void Start()
-    {
         WC = GameObject.Find("World").GetComponent<WorldController>();
     }
 
 
     void Update()
     {
+        if(selectedObjects.Count > 0)
+        {
+            if(selectedObjects[0].GetComponent<Human>() != null)
+            {
+                WC.ActivateScreen(selectedObjects[0].GetComponent<Human>().screen);
+                WC.ChangeText(selectedObjects[0].GetComponent<Human>().textToDisplay);
+            }
+        }
+
+
         if (Input.GetMouseButtonDown(0))
         {
             mousePos1 = Camera.main.ScreenToViewportPoint(Input.mousePosition);
@@ -80,10 +86,11 @@ public class Click : MonoBehaviour
                 {
                     WC.ActivateScreen(rayHit.collider.GetComponent<Building>().screen);
                     WC.ChangeText(rayHit.collider.GetComponent<Building>().textToDisplay);
-                    ClickOn clickOnScriptBuilding = rayHit.collider.GetComponent<ClickOn>();
-                    selectedObjects.Add(rayHit.collider.gameObject);
-                    clickOnScriptBuilding.currentlySelected = true;
-                    clickOnScriptBuilding.ClickMe();
+                    ClearSelection();
+                    //ClickOn clickOnScriptBuilding = rayHit.collider.GetComponent<ClickOn>();
+                    //selectedObjects.Add(rayHit.collider.gameObject);
+                    //clickOnScriptBuilding.currentlySelected = true;
+                    //clickOnScriptBuilding.ClickMe();
                 }
             }
             else
@@ -124,7 +131,7 @@ public class Click : MonoBehaviour
         {
             if (selectObject != null)
             {
-                if (selectRect.Contains(Camera.main.WorldToViewportPoint(selectObject.transform.position), true))
+                if (selectRect.Contains(Camera.main.WorldToViewportPoint(selectObject.transform.position), true) && selectObject.GetComponent<Character>().faction == "First")
                 {
                     selectedObjects.Add(selectObject);
                     selectObject.GetComponent<ClickOn>().currentlySelected = true;
@@ -150,6 +157,7 @@ public class Click : MonoBehaviour
     void ClearSelection()
     {
         WC.ActivateScreen(WC.buildScreen);
+        WC.ChangeText("");
         if (selectedObjects.Count > 0)
         {
             foreach (GameObject obj in selectedObjects)

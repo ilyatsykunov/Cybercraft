@@ -47,5 +47,16 @@ public class UIbarController : MonoBehaviour {
     {
         pic.SetActive(false);
     }
-
+    public void HighlightButton(Image button)
+    {
+        listOfPics.Remove(button);
+        button.color = Color.white;
+    }
+    public void AddToList(Image button)
+    {
+        if (!listOfPics.Contains(button))
+        {
+            listOfPics.Add(button);
+        }
+    }
 }

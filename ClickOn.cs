@@ -9,7 +9,6 @@ public class ClickOn : MonoBehaviour
     public GameObject targetHolder;
     public Vector3 oldTarget;
 
-    [HideInInspector]
     public bool currentlySelected = false;
 
     void Start()
