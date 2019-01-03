@@ -5,16 +5,18 @@ using UnityEngine.AI;
 
 public class Enemy : Character {
 
+    public bool canBeSeen;
+
     public bool isInAttackingState;
     public bool isInDefensiveState;
 
     protected Vector3 originalPosition;
 
     // Use this for initialization
-    protected override void Awake()
+    protected override void Start()
     {
-
-        base.Awake();
+        base.Start();
+        originalPosition = transform.position;
     }
 
     // Update is called once per frame
@@ -25,7 +27,7 @@ public class Enemy : Character {
         {
             DefensiveState();
         }
-        else
+        /*else
         {
             float distanceToOriginalPos = Vector3.Distance(gameObject.transform.position, originalPosition);
             if(distanceToOriginalPos > 15f)
@@ -33,7 +35,7 @@ public class Enemy : Character {
                 attackTarget = null;
                 target = originalPosition;
             }
-        }
+        }*/
     }
     public void AttackingState()
     {

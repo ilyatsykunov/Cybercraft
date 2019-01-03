@@ -7,38 +7,14 @@ public class ShowPrice : MonoBehaviour {
 
     public Text priceText;
 
-    void ActivateText(string price)
+    public void ActivateText(GameObject building)
     {
         priceText.gameObject.SetActive(true);
-        priceText.text = "price: " + price;
+        priceText.text = "Price: £" + building.GetComponent<Building>().price.ToString();
+        priceText.color = Color.white;
     }
     public void DeactivateText()
     {
         priceText.gameObject.SetActive(false);
-    }
-
-    public void Building1()
-    {
-        ActivateText("7000");
-    }
-    public void Building2()
-    {
-        ActivateText("15000");
-    }
-    public void Building3()
-    {
-        ActivateText("20000");
-    }
-    public void Unit1()
-    {
-        ActivateText("1000");
-    }
-    public void Unit2()
-    {
-        ActivateText("2000");
-    }
-    public void Unit3()
-    {
-        ActivateText("3000");
     }
 }

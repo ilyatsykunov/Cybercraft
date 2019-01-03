@@ -75,7 +75,7 @@ public class ChooseLocation : MonoBehaviour
         if (Input.GetKey(KeyCode.R))
         {
             float rotateBy =  100f * Time.deltaTime;
-            gameObject.transform.Rotate(0f, rotateBy, 0f);
+            gameObject.transform.Rotate(0f, 0f, rotateBy);
         }
 
         if (Input.GetMouseButtonDown(0) && canBePlaced == true)

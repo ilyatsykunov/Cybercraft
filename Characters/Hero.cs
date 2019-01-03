@@ -8,13 +8,15 @@ using UnityEngine;
 public class Hero : Character
 {
     protected bool isSelected;
+    public float spottingDistance;
+    public PlayerController pc;
 
     // Use this for initialization
-    protected override void Awake()
+    protected override void Start()
     {
-        screen = canvas.transform.Find("UnitScreen").gameObject;
+        pc = GameObject.Find("World").GetComponent<PlayerController>();
         isSelected = false;
-        base.Awake();
+        base.Start();
     }
     // Update is called once per frame
     protected override void Update()
@@ -33,21 +35,47 @@ public class Hero : Character
 
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out rayHit, Mathf.Infinity))
             {
-                if (rayHit.collider.gameObject.tag == "Enemy")
+                if(pc.isSelectingPatrol == false)
                 {
-                    attackTarget = rayHit.collider.gameObject;
-                }
-                else if (rayHit.collider.gameObject.tag == "Building")
-                {
-                    buildingToEnter = rayHit.collider.gameObject;
+                    patrolMode = false;
+                    patrolPoint1.SetActive(false);
+                    patrolPoint2.SetActive(false);
+                    if (rayHit.collider.gameObject.tag == "Enemy")
+                    {
+                        attackTarget = rayHit.collider.gameObject;
+                    }
+                    else if (rayHit.collider.gameObject.tag == "Building" && pc.isSelectingCapture  == true)
+                    {
+                        targetBuilding = rayHit.collider.gameObject;
+                    }
+                    else
+                    {
+                        attackTarget = null;
+                        target = new Vector3(rayHit.point.x, transform.position.y, rayHit.point.z);
+                    }
                 }
                 else
                 {
-                    attackTarget = null;
-                    target = new Vector3(rayHit.point.x, transform.position.y, rayHit.point.z);
+                    if(patrolPoint1.activeInHierarchy == false || patrolPoint2.activeInHierarchy == true)
+                    {
+                        patrolPoint1.transform.position = new Vector3(rayHit.point.x, transform.position.y, rayHit.point.z);
+                        patrolPoint1.SetActive(true);
+                        patrolPoint2.SetActive(false);
+                    }
+                    else if(patrolPoint1.activeInHierarchy == true && patrolPoint2.activeInHierarchy == false)
+                    {
+                        patrolPoint2.transform.position = new Vector3(rayHit.point.x, transform.position.y, rayHit.point.z);
+                        patrolPoint2.SetActive(true);
+                        pc.isSelectingPatrol = false;
+                    }
                 }
+
             }
         }
     }
-
+    public void Stop()
+    {
+        target = transform.position;
+        RemoveTarget();
+    }
 }

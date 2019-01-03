@@ -11,8 +11,8 @@ public class Civilian : Human {
     private float yAxis;
 
     // Use this for initialization
-    protected override void Awake () {
-        base.Awake();
+    protected override void Start() {
+        base.Start();
     }
 	
 	// Update is called once per frame
@@ -21,14 +21,24 @@ public class Civilian : Human {
         base.Update();
         ChangeAnimation();
         yAxis = transform.position.y;
-        if (transform.position != target && isMoving == false)
+        if (transform.position != target && isMoving == false && isInsideBuilding == false)
         {
-            target = transform.position;
+            Move();
         }
-        else if (transform.position == target && isMoving == false)
+        if(isMoving == false && isInsideBuilding == false)
         {
-            RandomTarget();
-            agent.SetDestination(target);
+            if (targetBuilding != null)
+            {
+                float doorDistance = Vector3.Distance(transform.position, targetBuilding.GetComponent<Building>().doors.transform.position);
+                if(doorDistance <= 1f)
+                {
+                    EnterBuilding();
+                }
+            }
+            else
+            {
+                RandomTarget();
+            }
         }
 	}
     private void RandomTarget()
@@ -49,8 +59,9 @@ public class Civilian : Human {
     {
         GameObject[] buildings = GameObject.FindGameObjectsWithTag("Building");
         int randomBuilding = Random.Range(0, buildings.Length);
-        target = buildings[randomBuilding].transform.position;
-
+        targetBuilding = buildings[randomBuilding];
+        GameObject door = targetBuilding.GetComponent<Building>().doors;
+        target = new Vector3(door.transform.position.x, transform.position.y, door.transform.position.z);
     }
 
     protected void ChangeAnimation()

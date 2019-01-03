@@ -12,6 +12,7 @@ public abstract class Character : Human
     public Vector3 oldTarget;
 
     //Figthing
+    public bool meleeAttack;
     public GameObject weapon;
     public bool isAttacking;
     public bool shouldBeAttacking;
@@ -30,11 +31,17 @@ public abstract class Character : Human
     //MiniMap
     public GameObject miniMapPoint;
 
+    public bool patrolMode;
+    public GameObject patrolPoint1;
+    public GameObject patrolPoint2;
+
     // Use this for initialization
-    protected override void Awake()
+    protected override void Start()
     {
-        base.Awake();
+        base.Start();
+        RemoveTarget();
         oldTarget = target;
+        meleeAttack = false;
     }
     // Update is called once per frame
     protected override void Update()
@@ -42,8 +49,8 @@ public abstract class Character : Human
         if(isAlive == true)
         {
             base.Update();
-            CaptureBuilding();
             ChangeAnimation();
+            Patrol();
             if ((target != transform.position && isMoving == false) || oldTarget != target)
             {
                 oldTarget = target;
@@ -53,13 +60,18 @@ public abstract class Character : Human
             {
                 if (weapon.GetComponent<Gun>().canShoot == false)
                 {
-                    TakeCover();
+                    
                 }
                 Attack();
             }
+            //Remove target if its dead
             if (attackTarget != null && attackTarget.GetComponent<Human>().isAlive == false)
             {
                 RemoveTarget();
+            }
+            if (targetBuilding != null)
+            {
+                CaptureBuilding();
             }
         }
     }
@@ -75,23 +87,32 @@ public abstract class Character : Human
             }*/
         }
     }
-
-    protected void Move()
+    protected void Patrol()
     {
-        if (isAttacking == true)
+        if(patrolPoint1.activeInHierarchy == true && patrolPoint2.activeInHierarchy == true)
         {
-            RemoveTarget();
+            if (patrolMode == false)
+            {
+                target = patrolPoint1.transform.position;
+            }
+            if (transform.position == patrolPoint1.transform.position)
+            {
+                patrolMode = true;
+                target = patrolPoint2.transform.position;
+            }
+            if (transform.position == patrolPoint2.transform.position)
+            {
+                patrolMode = true;
+                target = patrolPoint1.transform.position;
+            }
         }
-        agent.SetDestination(target);
     }
     protected void Attack()
     {
-        shouldBeAttacking = true;
-        target = transform.position;
         distanceToEnemy = Vector3.Distance(gameObject.transform.position, attackTarget.transform.position);
         directionToEnemy = (attackTarget.transform.position - transform.position).normalized;
         gameObject.transform.LookAt(attackTarget.transform.position);
-        if (!Physics.Raycast(gameObject.transform.position, directionToEnemy, distanceToEnemy, ignoreMask) && (!Physics.Raycast(shootFrom.transform.position, directionToEnemy, distanceToEnemy, ignoreMask)))
+        if (!Physics.Raycast(gameObject.transform.position, directionToEnemy, distanceToEnemy, ignoreMask) && (!Physics.Raycast(shootFrom.transform.position, directionToEnemy, distanceToEnemy, ignoreMask)) && distanceToEnemy < 15f)
         {
             enemyInRange = true;
         }
@@ -101,11 +122,13 @@ public abstract class Character : Human
         }
         if (enemyInRange == true)
         {
-            if (distanceToEnemy < 3f && isAttacking == false)
+            target = transform.position;
+            shouldBeAttacking = true;
+            if (distanceToEnemy < 3f && isAttacking == false && (weapon == null || weapon.GetComponent<Gun>().canShoot == false || meleeAttack == true))
             {
                 StartCoroutine("Melee");
             }
-            else if (distanceToEnemy > 3f && distanceToEnemy < 15f && isAttacking == false && weapon != null)
+            else if (distanceToEnemy > 3f && isAttacking == false && weapon != null && meleeAttack == false)
             {
                 oldAttackTarget = attackTarget;
                 weapon.GetComponent<Gun>().RangeAttack();
@@ -113,6 +136,7 @@ public abstract class Character : Human
         }
         else
         {
+            shouldBeAttacking = false;
             target = new Vector3(attackTarget.transform.position.x, transform.position.y, attackTarget.transform.position.z);
         }
     }
@@ -128,15 +152,17 @@ public abstract class Character : Human
     }
     protected void CaptureBuilding() 
     {
-        GameObject[] buildings = GameObject.FindGameObjectsWithTag("Building");
-        foreach (GameObject building in buildings)
+        GameObject door = targetBuilding.GetComponent<Building>().doors;
+        target = new Vector3(door.transform.position.x, transform.position.y, door.transform.position.z);
+        float doorDistance = Vector3.Distance(transform.position, targetBuilding.GetComponent<Building>().doors.transform.position);
+        if (doorDistance <= 1f)
         {
-            Building buildingScript = building.GetComponent<Building>();
-            float distance = Vector3.Distance(gameObject.transform.position, building.transform.position);
-            if (buildingScript.faction != faction && distance < 10f)
-            {
-                buildingScript.StartCoroutine(buildingScript.Capture(faction));
-            }
+            EnterBuilding();
+        }
+        Building buildingScript = targetBuilding.GetComponent<Building>();
+        if (isInsideBuilding == true)
+        {
+            buildingScript.StartCoroutine("Capture", faction);
         }
     }
     private void OnCollisionEnter(Collision collision)
@@ -161,7 +187,6 @@ public abstract class Character : Human
         oldAttackTarget = null;
         shouldBeAttacking = false;
     }
-
     protected void ChangeAnimation()
     {
         if(shouldBeAttacking == true)
@@ -188,4 +213,5 @@ public abstract class Character : Human
             }
         }
     }
+
 }

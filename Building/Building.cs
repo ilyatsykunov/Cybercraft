@@ -5,36 +5,55 @@ using UnityEngine.UI;
 
 public abstract class Building : MonoBehaviour
 {
-
-    [SerializeField]
-    protected int health;
+    public int price;
+    public float income = 2f;
+    public int health;
     [SerializeField]
     public string faction;
     public GameObject doors;
 
-    protected bool isBeingCaptured;
     [SerializeField]
-    protected int capturePercent;
+    public int percentage;
+    public bool beingDefended;
 
     //public WorldController WC;
     public GameObject screen;
     public GameObject canvas;
     public string textToDisplay;
 
+    //Entering
+    public List<GameObject> unitsInside = new List<GameObject>();
+    private List<GameObject> unitsGone = new List<GameObject>();
+
     // Use this for initialization
     protected virtual void Start()
     {
-        screen = canvas.transform.Find("UnitSpawnScreen").gameObject;
+        if(screen == null)
+        {
+            screen = canvas.transform.Find("BuildingScreen").gameObject;
+        }
+        doors = gameObject.transform.Find("Doors").gameObject;
         health = 100;
-        capturePercent = 0;
+        percentage = 0;
         //WC = GameObject.Find("World").GetComponent<WorldController>();
     }
 
     // Update is called once per frame
     protected virtual void Update()
     {
+        if(doors == null)
+        {
+            doors = gameObject.transform.Find("Doors").gameObject;
+        }
         ManageHealth();
-
+        if(unitsInside.Count > 0)
+        {
+            ManageUnitsInside();
+        }
+        else
+        {
+            StopCoroutine("Capture");
+        }
     }
 
     protected void ManageHealth()
@@ -48,23 +67,85 @@ public abstract class Building : MonoBehaviour
             health = 0;
         }
     }
+    public void ManageUnitsInside()
+    {
+        foreach(GameObject unit in unitsInside)
+        {
+            if(unit.tag == "Human")
+            {
+                StartCoroutine("Wait", unit);
+            }
+            AmmoRefill();
+        }
+        foreach(GameObject unit in unitsGone)
+        {
+            if (unitsInside.Contains(unit))
+            {
+                unitsInside.Remove(unit);
+            }
+        }
+        unitsGone.RemoveRange(0, unitsGone.Count);
+    }
+    public void DestroyBuilding()
+    {
+        if(health <= 0 || faction == "First")
+        {
+            Destroy(gameObject);
+        }
+    }
+    public IEnumerator Wait(GameObject unit)
+    {
+        float seconds = Random.Range(5f, 35f);
+        yield return new WaitForSeconds(seconds);
+        ResetUnit(unit);
+    }
     public IEnumerator Capture(string capturingFaction)
     {
-        if (capturePercent >= 100)
+        if (percentage >= 100)
         {
             faction = capturingFaction;
-            capturePercent = 0;
+            percentage = 0;
+            foreach(GameObject unit in unitsInside)
+            {
+                if(unit.tag != "Human")
+                {
+                    ResetUnit(unit);
+                }
+            }
             yield break;
         }
         else
         {
-            if (isBeingCaptured == false)
+            foreach (GameObject unit in unitsInside)
             {
-                isBeingCaptured = true;
-                yield return new WaitForSeconds(1);
-                capturePercent += 5;
-                isBeingCaptured = false;
+                if (unit.GetComponent<Character>() != null && unit.GetComponent<Character>().faction != capturingFaction || unit.tag == "Enemy")
+                {
+                    ResetUnit(unit);
+                    percentage = 0;
+                    StopCoroutine("Capture");
+                }
+            }
+            yield return new WaitForSeconds(price/100);
+            percentage += 5;
+            StartCoroutine("Capture", capturingFaction);
+        }
+    }
+    private void AmmoRefill()
+    {
+        foreach(GameObject unit in unitsInside)
+        {
+            if((unit.tag == "Player" || unit.tag == "Enemy") && unit.GetComponent<Character>().weapon != null)
+            {
+                unit.GetComponent<Character>().weapon.GetComponent<Gun>().magazineCurrent = unit.GetComponent<Character>().weapon.GetComponent<Gun>().magazineTotal;
+                unit.GetComponent<Character>().weapon.GetComponent<Gun>().currentTotal = unit.GetComponent<Character>().weapon.GetComponent<Gun>().totalCapacity;
             }
         }
+    }
+    private void ResetUnit(GameObject unit)
+    {
+        unit.SetActive(true);
+        unit.GetComponent<Human>().isInsideBuilding = false;
+        unit.GetComponent<Human>().targetBuilding = null;
+        unitsGone.Add(unit);
     }
 }

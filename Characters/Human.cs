@@ -18,17 +18,16 @@ public abstract class Human : MonoBehaviour {
 
     [SerializeField]
     public Vector3 target;
-    public GameObject buildingToEnter;
+    public GameObject targetBuilding;
     public bool isInsideBuilding;
 
     protected Animator charAnimator;
 
     public GameObject screen;
-    public GameObject canvas;
     public string textToDisplay;
 
     // Use this for initialization
-    protected virtual void Awake () {
+    protected virtual void Start() {
         isAlive = true;
         health = 100;
         target = transform.position;
@@ -64,31 +63,15 @@ public abstract class Human : MonoBehaviour {
             }
         }
     }
-
+    protected void Move()
+    {
+        agent.SetDestination(target);
+    }
     protected void EnterBuilding()
     {
-        if(buildingToEnter != null)
-        {
-            GameObject door = buildingToEnter.transform.Find("Door").gameObject;
-            target = door.transform.position;
-            if(transform.position == new Vector3(target.x, transform.position.y, target.z))
-            {
-                isInsideBuilding = true;
-            }
-            else
-            {
-                isInsideBuilding = false;
-            }
-        }
-        if (isInsideBuilding)
-        {
-            gameObject.SetActive(false);
-        }
-        else
-        {
-            gameObject.SetActive(true);
-        }
-
+        targetBuilding.GetComponent<Building>().unitsInside.Add(gameObject);
+        isInsideBuilding = true;
+        gameObject.SetActive(false);
     }
     protected IEnumerator GetSpeed()
     {

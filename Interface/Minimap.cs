@@ -32,11 +32,15 @@ public class Minimap : MonoBehaviour {
         {
             if (point.objectIn3DSpace.activeInHierarchy == true)
             {
+                if(point.objectIn2DSpace.activeInHierarchy == false)
+                {
+                    point.objectIn2DSpace.SetActive(true);
+                }
                 point.UpdateLocation();
             }
             else
             {
-                Destroy(point.objectIn2DSpace);
+                point.objectIn2DSpace.SetActive(false);
             }
         }
     }
