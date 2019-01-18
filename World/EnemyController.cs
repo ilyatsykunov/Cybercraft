@@ -25,7 +25,7 @@ public class EnemyController : MonoBehaviour {
 	}
     void DefendBuilding(GameObject building)
     {
-        int numberOfUnits = building.GetComponent<Building>().price / 100;
+        int numberOfUnits = building.GetComponent<Building>().price / 150;
         for(int i = 0; i < numberOfUnits; i++)
         {
             var unit = Instantiate(unitPrefab1, spawnPoint.transform.position, Quaternion.identity) as GameObject;

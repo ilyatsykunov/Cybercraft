@@ -24,7 +24,9 @@ public abstract class Gun : MonoBehaviour {
     [SerializeField]
     protected GameObject bulletPrefab;
 
+    //Player
     public GameObject gunHolder;
+    private int aiming;
 
     protected virtual void Awake()
     {
@@ -68,8 +70,9 @@ public abstract class Gun : MonoBehaviour {
         }
     }
 
-    public void RangeAttack()
+    public void RangeAttack(int unitAiming)
     {
+        aiming = unitAiming;
         if (magazineCurrent > 0)
         {
             canShoot = true;
@@ -96,7 +99,7 @@ public abstract class Gun : MonoBehaviour {
         yield return new WaitForSeconds(firingRate);
         if (oldAttackTarget == attackTarget)
         {
-            Vector3 shootTo = new Vector3(Random.Range(attackTarget.transform.position.x - 0.1f, attackTarget.transform.position.x + 0.1f), Random.Range(attackTarget.transform.position.y, attackTarget.transform.position.y + 1f), Random.Range(attackTarget.transform.position.z - 0.2f, attackTarget.transform.position.z + 0.2f));
+            Vector3 shootTo = new Vector3(Random.Range(attackTarget.transform.position.x - aiming / 5f, attackTarget.transform.position.x + aiming / 5f), Random.Range(attackTarget.transform.position.y + 0.5f - aiming / 5f, attackTarget.transform.position.y + 0.5f + aiming / 5f), Random.Range(attackTarget.transform.position.z - aiming / 5f, attackTarget.transform.position.z + aiming / 5f));
             GameObject spawnedBullet = Instantiate(bulletPrefab, shootFrom.transform.position, Quaternion.identity) as GameObject;
             spawnedBullet.GetComponent<Bullet>().ShootTo(shootTo);
             spawnedBullet.GetComponent<Bullet>().launchedBy = parentCharacter;

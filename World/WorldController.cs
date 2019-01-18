@@ -10,6 +10,7 @@ public class WorldController : MonoBehaviour
 
     public Text money;
     public Text textGO;
+    public Text textGO2;
     public Canvas canvas;
     public Text priceGO;
     public GameObject percentageBar;
@@ -27,7 +28,7 @@ public class WorldController : MonoBehaviour
     }
     private void Update()
     {
-        money.text = pc.moneyAmount.ToString();
+        money.text = "£" + pc.moneyAmount.ToString();
     }
 
     public void SpawnBuilding(GameObject building)
@@ -57,9 +58,10 @@ public class WorldController : MonoBehaviour
         }
 
     }
-    public void ChangeText(string textToDisplay)
+    public void ChangeText(string textToDisplay, string textToDisplay2)
     {
         textGO.text = textToDisplay;
+        textGO2.text = textToDisplay2;
     }
     public void ChangePercentageBar(GameObject building)
     {

@@ -15,20 +15,22 @@ public class PlayerController : MonoBehaviour {
     // Use this for initialization
     void Start () {
         StartCoroutine("passiveIncome", 2f);
-        if(isSelectingPatrol == true)
-        {
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                isSelectingPatrol = false;
-            }
-        }
     }
 	
 	// Update is called once per frame
 	void Update () {
         FindBuildings();
         moneyIncome = MoneyIncome(ownedBuildings);
-	}
+
+        if (isSelectingPatrol == true || isSelectingCapture == true)
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                isSelectingPatrol = false;
+                isSelectingCapture = false;
+            }
+        }
+    }
     private void FindBuildings()
     {
         GameObject[] buildings = GameObject.FindGameObjectsWithTag("Building");
@@ -73,5 +75,10 @@ public class PlayerController : MonoBehaviour {
             income += building.GetComponent<Building>().income;
         }
         return income;
+    }
+    public void CancelEverything()
+    {
+        isSelectingPatrol = false;
+        isSelectingCapture = false;
     }
 }

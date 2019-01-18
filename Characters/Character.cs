@@ -11,6 +11,15 @@ public abstract class Character : Human
     public string faction;
     public Vector3 oldTarget;
 
+    //Stats
+    public int totalStrength;
+    public int totalAiming;
+    public int totalSpeed;
+    protected int initialStrength;
+    protected int initialAiming;
+    protected int initialSpeed;
+    public List<Modification> listOfMods = new List<Modification>();
+
     //Figthing
     public bool meleeAttack;
     public GameObject weapon;
@@ -48,6 +57,7 @@ public abstract class Character : Human
     {
         if(isAlive == true)
         {
+            //UpdateStats();
             base.Update();
             ChangeAnimation();
             Patrol();
@@ -89,23 +99,34 @@ public abstract class Character : Human
     }
     protected void Patrol()
     {
-        if(patrolPoint1.activeInHierarchy == true && patrolPoint2.activeInHierarchy == true)
+        if(patrolPoint1 != null && patrolPoint2 != null)
         {
-            if (patrolMode == false)
+            if (patrolPoint1.activeInHierarchy == true && patrolPoint2.activeInHierarchy == true)
             {
-                target = patrolPoint1.transform.position;
-            }
-            if (transform.position == patrolPoint1.transform.position)
-            {
-                patrolMode = true;
-                target = patrolPoint2.transform.position;
-            }
-            if (transform.position == patrolPoint2.transform.position)
-            {
-                patrolMode = true;
-                target = patrolPoint1.transform.position;
+                if (patrolMode == false)
+                {
+                    target = patrolPoint1.transform.position;
+                }
+                if (transform.position == patrolPoint1.transform.position)
+                {
+                    patrolMode = true;
+                    target = patrolPoint2.transform.position;
+                }
+                if (transform.position == patrolPoint2.transform.position)
+                {
+                    patrolMode = true;
+                    target = patrolPoint1.transform.position;
+                }
             }
         }
+        else
+        {
+            patrolPoint1 = new GameObject();
+            patrolPoint2 = new GameObject();
+            patrolPoint1.SetActive(false);
+            patrolPoint2.SetActive(false);
+        }
+
     }
     protected void Attack()
     {
@@ -131,7 +152,7 @@ public abstract class Character : Human
             else if (distanceToEnemy > 3f && isAttacking == false && weapon != null && meleeAttack == false)
             {
                 oldAttackTarget = attackTarget;
-                weapon.GetComponent<Gun>().RangeAttack();
+                weapon.GetComponent<Gun>().RangeAttack(totalAiming);
             }
         }
         else
@@ -147,7 +168,7 @@ public abstract class Character : Human
         target = transform.position;
         weapon.GetComponent<Gun>().StopCoroutine("Shoot");
         yield return new WaitForSeconds(1);
-        attackTarget.GetComponent<Character>().health -= 10;
+        attackTarget.GetComponent<Character>().health -= totalStrength * 2;
         isAttacking = false;
     }
     protected void CaptureBuilding() 
@@ -187,7 +208,7 @@ public abstract class Character : Human
         oldAttackTarget = null;
         shouldBeAttacking = false;
     }
-    protected void ChangeAnimation()
+    protected virtual void ChangeAnimation()
     {
         if(shouldBeAttacking == true)
         {
@@ -213,5 +234,43 @@ public abstract class Character : Human
             }
         }
     }
-
+    
+    //Stats
+    private void UpdateStats()
+    {
+        if(listOfMods.Count > 0)
+        {
+            totalStrength = TotalStrength();
+            totalAiming = TotalAiming();
+            totalSpeed = TotalSpeed();
+        }
+        agent.speed = totalSpeed / 15;
+    }
+    private int TotalStrength()
+    {
+        int strength = initialStrength;
+        foreach (Modification mod in listOfMods)
+        {
+            strength += mod.GetComponent<Modification>().strength;
+        }
+        return strength;
+    }
+    private int TotalAiming()
+    {
+        int aiming = initialAiming;
+        foreach (Modification mod in listOfMods)
+        {
+            aiming += mod.GetComponent<Modification>().aiming;
+        }
+        return aiming;
+    }
+    private int TotalSpeed()
+    {
+        int speed = initialSpeed;
+        foreach (Modification mod in listOfMods)
+        {
+            speed += mod.GetComponent<Modification>().speed;
+        }
+        return speed;
+    }
 }

@@ -9,6 +9,8 @@ public class Click : MonoBehaviour
     [SerializeField]
     private LayerMask clickablesLayer;
     [SerializeField]
+    private LayerMask clickableEnemiesLayer;
+    [SerializeField]
     private LayerMask obstaclesLayer;
     [SerializeField]
     private LayerMask anyLayer;
@@ -41,21 +43,21 @@ public class Click : MonoBehaviour
             if(selectedObjects[0].GetComponent<Human>() != null)
             {
                 WC.ActivateScreen(selectedObjects[0].GetComponent<Human>().screen);
-                WC.ChangeText(selectedObjects[0].GetComponent<Human>().textToDisplay);
+                WC.ChangeText(selectedObjects[0].GetComponent<Human>().nameToDisplay, selectedObjects[0].GetComponent<Human>().infoToDisplay);
             }
         }
 
 
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
         {
+            pc.CancelEverything();
             mousePos1 = Camera.main.ScreenToViewportPoint(Input.mousePosition);
             RaycastHit rayHit;
             
-            pc.isSelectingPatrol = true;
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out rayHit, Mathf.Infinity, clickablesLayer))
             {
                 WC.ActivateScreen(rayHit.collider.GetComponent<Human>().screen);
-                WC.ChangeText(rayHit.collider.GetComponent<Human>().textToDisplay);
+                WC.ChangeText(rayHit.collider.GetComponent<Human>().nameToDisplay, selectedObjects[0].GetComponent<Human>().infoToDisplay);
                 ClickOn clickOnScript = rayHit.collider.GetComponent<ClickOn>();
 
                 if (Input.GetKey(KeyCode.LeftShift))
@@ -83,13 +85,27 @@ public class Click : MonoBehaviour
                     clickOnScript.ClickMe();
                 }
             }
+            else if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out rayHit, Mathf.Infinity, clickableEnemiesLayer))
+            {
+                ClickOn clickOnScript = rayHit.collider.GetComponent<ClickOn>();
+                WC.ActivateScreen(rayHit.collider.GetComponent<Human>().screen);
+                WC.ChangeText(rayHit.collider.GetComponent<Human>().nameToDisplay, rayHit.collider.GetComponent<Human>().infoToDisplay);
+                WC.AssignButtons(rayHit.collider.gameObject);
+                ClearSelection();
+                if (rayHit.collider.gameObject.GetComponent<ClickOn>() != null)
+                {
+                    selectedObjects.Add(rayHit.collider.gameObject);
+                    rayHit.collider.gameObject.GetComponent<ClickOn>().currentlySelected = true;
+                    rayHit.collider.gameObject.GetComponent<ClickOn>().ClickMe();
+                }
+            }
             else if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out rayHit, Mathf.Infinity, obstaclesLayer))
             {
                 ClickOn clickOnScript = rayHit.collider.GetComponent<ClickOn>();
                 if(rayHit.collider.tag == "Building")
                 {
                     WC.ActivateScreen(rayHit.collider.GetComponent<Building>().screen);
-                    WC.ChangeText(rayHit.collider.GetComponent<Building>().textToDisplay);
+                    WC.ChangeText(rayHit.collider.GetComponent<Building>().nameToDisplay, rayHit.collider.GetComponent<Building>().infoToDisplay);
                     WC.ChangePercentageBar(rayHit.collider.gameObject);
                     WC.AssignButtons(rayHit.collider.gameObject);
                     ClearSelection();
@@ -105,7 +121,7 @@ public class Click : MonoBehaviour
             {
                 ClearSelection();
                 WC.ActivateScreen(WC.buildScreen);
-                WC.ChangeText("");
+                WC.ChangeText("", "");
             }
 
         }
@@ -124,7 +140,7 @@ public class Click : MonoBehaviour
         {
             ClearSelection();
             WC.ActivateScreen(WC.buildScreen);
-            WC.ChangeText("");
+            WC.ChangeText("", "");
         }
     }
 

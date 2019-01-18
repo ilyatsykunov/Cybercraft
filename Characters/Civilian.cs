@@ -41,7 +41,7 @@ public class Civilian : Human {
             }
         }
 	}
-    private void RandomTarget()
+    protected void RandomTarget()
     {
         int randomThingToDo = Random.Range(0, 10);
         if (randomThingToDo == 1)
@@ -64,7 +64,7 @@ public class Civilian : Human {
         target = new Vector3(door.transform.position.x, transform.position.y, door.transform.position.z);
     }
 
-    protected void ChangeAnimation()
+    protected virtual void ChangeAnimation()
     {
         if (isMoving == true)
         {

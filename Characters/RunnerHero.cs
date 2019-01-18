@@ -8,6 +8,9 @@ public class RunnerHero : Hero
 
     protected override void Start()
     {
+        initialStrength = 2;
+        initialAiming = 4;
+        initialSpeed = 5;
         base.Start();
         spottingDistance += 5f;
     }

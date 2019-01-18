@@ -12,11 +12,9 @@ public abstract class Human : MonoBehaviour {
     public int health;
     public bool isAlive;
 
-    [SerializeField]
-    protected bool isMoving;
+    public bool isMoving;
     protected NavMeshAgent agent;
 
-    [SerializeField]
     public Vector3 target;
     public GameObject targetBuilding;
     public bool isInsideBuilding;
@@ -24,7 +22,8 @@ public abstract class Human : MonoBehaviour {
     protected Animator charAnimator;
 
     public GameObject screen;
-    public string textToDisplay;
+    public string nameToDisplay;
+    public string infoToDisplay;
 
     // Use this for initialization
     protected virtual void Start() {

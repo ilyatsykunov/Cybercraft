@@ -19,7 +19,8 @@ public abstract class Building : MonoBehaviour
     //public WorldController WC;
     public GameObject screen;
     public GameObject canvas;
-    public string textToDisplay;
+    public string nameToDisplay;
+    public string infoToDisplay;
 
     //Entering
     public List<GameObject> unitsInside = new List<GameObject>();
