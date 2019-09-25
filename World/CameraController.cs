@@ -8,8 +8,8 @@ public class CameraController : MonoBehaviour
     public float panBorderThickness = 25f;
     public bool borderScroll = false;
     public Vector2 panLimit;
-    private float minY = 5f;
-    private float maxY = 30f;
+    public float minY = 5f;
+    public float maxY = 30f;
 
     private float mouseX;
     private float mouseY;

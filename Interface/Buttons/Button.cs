@@ -25,7 +25,7 @@ public abstract class Button : MonoBehaviour {
     public void EnableText()
     {
         infoText.text = info;
-        infoBox.transform.position = new Vector3(Input.mousePosition.x, Input.mousePosition.y + 35f, Input.mousePosition.z);
+        infoBox.transform.position = new Vector3(Input.mousePosition.x, Input.mousePosition.y + 50f, Input.mousePosition.z);
         infoBox.SetActive(true);
         
     }
